@@ -12,35 +12,38 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        .background-geografia {
-            background-image: url('https://images.unsplash.com/photo-1526778548025-1db135a44363?q=80&w=2070&auto=format&fit=crop');
-        }
-        .background-pessoas {
-            background-image: url('https://images.unsplash.com/photo-1509652219539-444988a631a3?q=80&w=2070&auto=format&fit=crop');
-        }
-        .background-eventos {
-            background-image: url('https://images.unsplash.com/photo-1606563428982-113b2c243888?q=80&w=1932&auto=format&fit=crop');
-        }
+        
+        /* Ajuste a transparência para ver a imagem de fundo de forma mais clara */
         .glassmorphism {
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7); /* Opacidade aumentada para 70% para diminuir a transparência */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Estilo para a tela de carregamento inicial com a imagem de fundo exclusiva */
+        .background-initial {
+            /* URL da imagem de fundo da tela inicial apontando para o GitHub Pages */
+            background-image: url('https://filhodegleb.github.io/quizz-biblico/imagens/Design%20sem%20nome%20(1).png');
+            background-size: cover;
+            background-position: center;
+        }
+        /* Estilo para a sombra do texto do título */
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Sombra escura para contraste */
         }
     </style>
 </head>
 <body class="bg-slate-900 text-white">
 
     <!-- Música de Fundo da Tela Inicial -->
-    <!-- Fonte da música será definida via JavaScript para alternar -->
+    <!-- A fonte será definida via JavaScript para alternar entre as músicas -->
     <audio id="bg-music" loop>
-        <!-- A source src será atualizada via JS -->
         Seu navegador não suporta o elemento de áudio.
     </audio>
 
     <!-- Tela de Carregamento/Inicialização (para interação inicial) -->
-    <div id="initial-load-screen" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900">
-        <h1 class="text-4xl font-bold mb-6 text-amber-300 animate-pulse">Carregando Quiz Bíblico...</h1>
+    <div id="initial-load-screen" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900 background-initial">
+        <h1 class="text-4xl font-bold mb-6 text-white text-shadow animate-pulse text-center">Desafio Colégio Adventista Eunápolis</h1>
         <button id="start-app-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl shadow-lg transition-all duration-300 transform hover:scale-105">
             Iniciar Quiz
         </button>
@@ -140,7 +143,7 @@
                 { question: "Perto de qual mar Jesus realizou grande parte de seu ministério?", answers: ["Mar Morto", "Mar Vermelho", "Mar Mediterrâneo", "Mar da Galileia"], correct: 3 },
                 { question: "Em qual montanha Moisés recebeu os Dez Mandamentos?", answers: ["Monte Carmelo", "Monte das Oliveiras", "Monte Sinai", "Monte Hermom"], correct: 2 },
                 { question: "Qual era o nome da terra prometida por Deus a Abraão e seus descendentes?", answers: ["Egito", "Canaã", "Babilônia", "Assíria"], correct: 1 },
-                { question: "Qual cidade foi destruída junto com Gomorra?", answers: ["Ur", "Sodoma", "Nínive", "Babel"], correct: 1 },
+                { question: "Qual cidade foi destruída junto com Gomorra?", answers: ["Ur", "Sodoma", "Nínive", "Babilônia"], correct: 1 },
                 { question: "O apóstolo Paulo naufragou na ilha de...?", answers: ["Creta", "Chipre", "Malta", "Patmos"], correct: 2 },
                 { question: "Qual foi a primeira cidade que os israelitas conquistaram em Canaã sob a liderança de Josué?", answers: ["Ai", "Jericó", "Jerusalém", "Hebron"], correct: 1 },
                 { question: "De qual cidade era o profeta Jonas quando fugiu de Deus?", answers: ["Jope", "Társis", "Nínive", "Babilônia"], correct: 0 },
@@ -212,7 +215,7 @@
                 { question: "O que aconteceu no dia de Pentecostes, registrado no livro de Atos?", answers: ["A ascensão de Jesus", "A ressurreição de Lázaro", "O derramamento do Espírito Santo", "A conversão de Paulo"], correct: 2 },
                 { question: "Qual evento levou à dispersão da humanidade por toda a Terra?", answers: ["O Dilúvio", "A destruição de Sodoma", "A Torre de Babel", "A escravidão no Egito"], correct: 2 },
                 { question: "Em qual evento Jesus foi glorificado na presença de Pedro, Tiago e João?", answers: ["No Sermão da Montanha", "Na Transfiguração", "Na multiplicação dos pães", "Na cura do cego Bartimeu"], correct: 1 },
-                { question: "A queda dos muros de qual cidade ocorreu após os israelitas marcharem ao seu redor?", answers: ["Jerusalém", "Jericó", "Babilônia", "Ai"], correct: 1 },
+                { question: "A caída dos muros de qual cidade ocorreu após os israelitas marcharem ao seu redor?", answers: ["Jerusalém", "Jericó", "Babilônia", "Ai"], correct: 1 },
                 { question: "O que aconteceu quando Paulo e Silas estavam presos em Filipos?", answers: ["Eles fugiram", "Um anjo os libertou", "Um terremoto abriu as portas da prisão", "O carcereiro os soltou"], correct: 2 },
                 { question: "Qual foi o sinal da aliança de Deus com Noé após o Dilúvio?", answers: ["A pomba", "O ramo de oliveira", "A circuncisão", "O arco-íris"], correct: 3 },
                  // Bloco 2
@@ -244,11 +247,13 @@
         let currentTopic = '';
         let currentQuestionIndex = 0;
         let score = 0;
+        // Objeto para armazenar o progresso em cada tópico, carregado do localStorage
         let progress = { geografia: 0, pessoas: 0, eventos: 0 };
         const questionsPerBlock = 10;
-        let currentMusicIndex = 0; // Para controlar qual música está tocando
+        // Índice para alternar entre as músicas de fundo
+        let currentBackgroundMusicIndex = 0; 
 
-        // Elementos da interface
+        // Elementos da interface (cache de referências DOM para performance)
         const initialLoadScreen = document.getElementById('initial-load-screen');
         const startAppButton = document.getElementById('start-app-button');
         const homeScreen = document.getElementById('home-screen');
@@ -257,44 +262,82 @@
         const victoryScreen = document.getElementById('victory-screen');
         const bgMusic = document.getElementById('bg-music');
 
-        // URLs das músicas de fundo (agora duas para alternar)
+        // --- CONFIGURAÇÃO DE RECURSOS ---
+        // Base URL para os recursos hospedados no GitHub Pages
+        const GITHUB_PAGES_BASE_URL = 'https://filhodegleb.github.io/quizz-biblico/';
+
+        // URLs das músicas de fundo (alternarão na tela inicial)
         const backgroundMusicUrls = [
-            "https://github.com/FilhodeGleb/quizz-biblico/raw/main/dnc.mp3",
-            "https://github.com/FilhodeGleb/quizz-biblico/raw/main/amor.mp3"
+            `${GITHUB_PAGES_BASE_URL}dnc.mp3`,
+            `${GITHUB_PAGES_BASE_URL}amor.mp3`
         ];
 
-        // Sons (Atualizados com os seus URLs)
-        const correctSound = new Audio('https://github.com/FilhodeGleb/quizz-biblico/raw/main/pointsg.mp3');
-        const incorrectSound = new Audio('https://github.com/FilhodeGleb/quizz-biblico/raw/main/perdeu.mp3');
-        const blockCompleteSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-video-game-cheers-2060.mp3');
-        const victorySound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-game-success-alert-2009.mp3');
-        
+        // URLs das imagens de fundo para as perguntas (seleção aleatória)
+        const quizBackgroundImages = [
+            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(2).png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(3).png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(4).png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(5).png`
+        ];
+
+        // Sons para feedback (acerto, erro, bloco completo, vitória)
+        const correctSound = new Audio(`${GITHUB_PAGES_BASE_URL}pointsg.mp3`);
+        const incorrectSound = new Audio(`${GITHUB_PAGES_BASE_URL}perdeu.mp3`);
+        // Sons genéricos mantidos do mixkit, considere substituí-los por seus próprios arquivos se desejar
+        const blockCompleteSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-video-game-cheers-2060.mp3'); 
+        const victorySound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-game-success-alert-2009.mp3'); 
+
+        // --- FUNÇÕES DE UTILIDADE ---
+
+        /**
+         * Pré-carrega as imagens para garantir transições suaves.
+         * @param {Array<string>} imageUrls - Array de URLs das imagens a serem pré-carregadas.
+         */
+        function preloadImages(imageUrls) {
+            imageUrls.forEach(url => {
+                const img = new Image();
+                img.src = url;
+            });
+        }
+
+        /**
+         * Exibe uma tela específica do aplicativo e gerencia a música de fundo.
+         * @param {string} screenId - O ID do elemento da tela a ser exibida.
+         */
         function showScreen(screenId) {
-            // Pausar música de fundo quando sair da tela inicial
+            // Pausa a música de fundo se estiver saindo da tela inicial para evitar sobreposição de áudios
             if (screenId !== 'home-screen' && bgMusic && !bgMusic.paused) {
                 bgMusic.pause();
-                bgMusic.currentTime = 0; // Reinicia a música para a próxima vez
+                bgMusic.currentTime = 0; // Reinicia a música para a próxima vez que for tocada
             }
 
+            // Oculta todas as telas
             initialLoadScreen.classList.add('hidden');
             homeScreen.classList.add('hidden');
             quizScreen.classList.add('hidden');
             resultsScreen.classList.add('hidden');
             victoryScreen.classList.add('hidden');
+
+            // Exibe a tela desejada
             document.getElementById(screenId).classList.remove('hidden');
             
+            // Se a tela inicial estiver sendo exibida, atualiza o progresso e toca a próxima música de fundo
             if (screenId === 'home-screen') {
                 updateProgressDisplay();
                 // Alterna a música de fundo e a reproduz
-                bgMusic.src = backgroundMusicUrls[currentMusicIndex];
-                currentMusicIndex = (currentMusicIndex + 1) % backgroundMusicUrls.length; // Avança para a próxima música
+                bgMusic.src = backgroundMusicUrls[currentBackgroundMusicIndex];
+                currentBackgroundMusicIndex = (currentBackgroundMusicIndex + 1) % backgroundMusicUrls.length; // Avança para a próxima música
                 
                 if (bgMusic && bgMusic.paused) { 
-                    bgMusic.play().catch(e => console.log("Erro ao tentar tocar a música: ", e));
+                    bgMusic.play().catch(e => console.log("Erro ao tentar tocar a música de fundo: ", e));
                 }
             }
         }
 
+        /**
+         * Carrega o progresso do quiz do localStorage.
+         */
         function loadProgress() {
             const savedProgress = localStorage.getItem('quizBiblicoProgress');
             if (savedProgress) {
@@ -302,10 +345,16 @@
             }
         }
         
+        /**
+         * Salva o progresso atual do quiz no localStorage.
+         */
         function saveProgress() {
             localStorage.setItem('quizBiblicoProgress', JSON.stringify(progress));
         }
 
+        /**
+         * Atualiza a exibição do progresso de cada tópico na tela inicial.
+         */
         function updateProgressDisplay() {
             for (const topic in progress) {
                 const progressElement = document.getElementById(`progress-${topic}`);
@@ -315,11 +364,16 @@
             }
         }
         
+        /**
+         * Inicia o quiz para um tópico específico.
+         * @param {string} topic - O tópico do quiz a ser iniciado ('geografia', 'pessoas', 'eventos').
+         */
         function startQuiz(topic) {
             currentTopic = topic;
             currentQuestionIndex = progress[topic] || 0;
             score = 0;
             
+            // Verifica se o tópico já foi concluído
             if (currentQuestionIndex >= 30) {
                 const feedbackMessage = document.getElementById('feedback-message-home');
                 if (feedbackMessage) {
@@ -330,38 +384,55 @@
                 return;
             }
 
-            // Define o plano de fundo
-            quizScreen.className = `min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center background-${topic}`;
-            resultsScreen.className = `hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center background-${topic}`;
-            victoryScreen.className = `hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center background-${topic}`;
+            // Seleciona e aplica uma imagem de fundo aleatória para as telas do quiz
+            const randomImage = quizBackgroundImages[Math.floor(Math.random() * quizBackgroundImages.length)];
+            quizScreen.style.backgroundImage = `url('${randomImage}')`;
+            quizScreen.style.backgroundSize = 'cover';
+            quizScreen.style.backgroundPosition = 'center';
 
+            // Aplica a mesma imagem de fundo para as telas de resultados e vitória para consistência
+            resultsScreen.style.backgroundImage = `url('${randomImage}')`;
+            resultsScreen.style.backgroundSize = 'cover';
+            resultsScreen.style.backgroundPosition = 'center';
 
-            displayQuestion();
-            showScreen('quiz-screen');
+            victoryScreen.style.backgroundImage = `url('${randomImage}')`;
+            victoryScreen.style.backgroundSize = 'cover';
+            victoryScreen.style.backgroundPosition = 'center';
+
+            displayQuestion(); // Exibe a primeira pergunta
+            showScreen('quiz-screen'); // Mostra a tela do quiz
         }
 
+        /**
+         * Exibe a pergunta atual e suas opções de resposta.
+         */
         function displayQuestion() {
             const questionData = quizData[currentTopic][currentQuestionIndex];
             const questionText = document.getElementById('question-text');
             const answerOptions = document.getElementById('answer-options');
             
+            // Atualiza o texto de progresso da pergunta
             document.getElementById('progress-text').textContent = `Pergunta ${ (currentQuestionIndex % questionsPerBlock) + 1 } de ${questionsPerBlock}`;
             questionText.textContent = questionData.question;
-            answerOptions.innerHTML = '';
+            answerOptions.innerHTML = ''; // Limpa as opções anteriores
             
-            document.getElementById('feedback-message').innerHTML = '';
+            document.getElementById('feedback-message').innerHTML = ''; // Limpa a mensagem de feedback
 
+            // Cria e adiciona os botões de resposta
             questionData.answers.forEach((answer, index) => {
                 const button = document.createElement('button');
                 button.textContent = answer;
                 button.className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all text-base sm:text-lg';
-                // Adicionei um atributo de dados para armazenar o índice da resposta, tornando a lógica mais robusta
-                button.dataset.answerIndex = index; 
-                button.onclick = () => handleAnswer(index);
+                button.dataset.answerIndex = index; // Armazena o índice da resposta no dataset do botão
+                button.onclick = () => handleAnswer(index); // Define o manipulador de clique
                 answerOptions.appendChild(button);
             });
         }
         
+        /**
+         * Lida com a resposta do usuário para uma pergunta.
+         * @param {number} selectedIndex - O índice da opção de resposta selecionada pelo usuário.
+         */
         function handleAnswer(selectedIndex) {
             const questionData = quizData[currentTopic][currentQuestionIndex];
             const isCorrect = selectedIndex === questionData.correct;
@@ -369,84 +440,93 @@
             const answerOptionsDiv = document.getElementById('answer-options'); 
             const answerButtons = answerOptionsDiv.children; 
 
-            // Desabilitar todos os botões imediatamente
+            // Desabilita todos os botões para evitar cliques múltiplos
             for (let i = 0; i < answerButtons.length; i++) {
                 answerButtons[i].disabled = true;
             }
 
-            // Aplicar estilos com base na correção
+            // Aplica estilos visuais e toca sons com base na correção da resposta
             if (isCorrect) {
                 score++;
                 correctSound.play().catch(e => console.log("Erro ao tocar som de acerto: ", e));
-                // Usar o selectedIndex diretamente para estilizar o botão clicado
                 answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg';
                 feedbackMessage.textContent = "Resposta Correta!";
                 feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-green-300";
             } else {
                 incorrectSound.play().catch(e => console.log("Erro ao tocar som de erro: ", e));
-                // Estilizar o botão clicado como incorreto
                 answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-red-500 transition-all text-base sm:text-lg';
-                // Estilizar a resposta correta
-                answerButtons[questionData.correct].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg';
+                answerButtons[questionData.correct].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg'; // Destaca a resposta correta
                 feedbackMessage.textContent = "Resposta Incorreta!";
                 feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-red-300";
             }
             
+            // Avança para a próxima pergunta ou tela de resultados após um pequeno atraso
             setTimeout(() => {
                 currentQuestionIndex++;
+                // Verifica se o bloco de 10 perguntas terminou ou se todas as perguntas do tópico foram respondidas
                 if (currentQuestionIndex % questionsPerBlock === 0 || currentQuestionIndex >= quizData[currentTopic].length) {
                     if (currentQuestionIndex >= 30) { 
-                        showVictoryScreen();
+                        showVictoryScreen(); // Exibe a tela de vitória se todas as 30 perguntas do tópico foram respondidas
                     } else {
                         blockCompleteSound.play().catch(e => console.log("Erro ao tocar som de bloco completo: ", e)); 
-                        showResults();
+                        showResults(); // Exibe a tela de resultados do bloco
                     }
                 } else {
-                    displayQuestion();
+                    displayQuestion(); // Exibe a próxima pergunta
                 }
-            }, 2000); 
+            }, 2000); // 2 segundos de atraso
         }
 
+        /**
+         * Exibe a tela de resultados após a conclusão de um bloco de perguntas.
+         */
         function showResults() {
-            progress[currentTopic] = currentQuestionIndex;
-            saveProgress();
+            progress[currentTopic] = currentQuestionIndex; // Atualiza o progresso do tópico
+            saveProgress(); // Salva o progresso no localStorage
             
             document.getElementById('results-text').textContent = `Você acertou ${score} de ${questionsPerBlock} perguntas.` ;
             
             const buttonsContainer = document.getElementById('results-buttons');
-            buttonsContainer.innerHTML = '';
+            buttonsContainer.innerHTML = ''; // Limpa os botões anteriores
             
+            // Adiciona o botão "Próximo Bloco" se houver mais perguntas no tópico
             if(currentQuestionIndex < 30) {
                 const continueButton = document.createElement('button');
                 continueButton.textContent = 'Próximo Bloco';
                 continueButton.className = 'bg-green-600 hover:bg-green-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
                 continueButton.onclick = () => startQuiz(currentTopic);
                 buttonsContainer.appendChild(continueButton);
-            } else {
-                // Esta parte agora é tratada pela showVictoryScreen
-            }
+            } 
 
+            // Adiciona o botão "Voltar ao Menu"
             const homeButton = document.createElement('button');
             homeButton.textContent = 'Voltar ao Menu';
             homeButton.className = 'bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
             homeButton.onclick = () => showScreen('home-screen');
             buttonsContainer.appendChild(homeButton);
             
-            showScreen('results-screen');
+            showScreen('results-screen'); // Mostra a tela de resultados
         }
 
+        /**
+         * Exibe a tela de vitória final quando um tópico é totalmente concluído.
+         */
         function showVictoryScreen() {
             victorySound.play().catch(e => console.log("Erro ao tocar som de vitória: ", e)); 
-            victoryScreen.className = `min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center background-${currentTopic}`;
+            // A imagem de fundo já é definida na função startQuiz e mantida para consistência
+            victoryScreen.className = `min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center`; 
             showScreen('victory-screen');
         }
         
-        // --- INICIALIZAÇÃO ---
+        // --- INICIALIZAÇÃO DO APLICATIVO ---
         window.onload = () => {
-            loadProgress();
-            initialLoadScreen.classList.remove('hidden');
-            homeScreen.classList.add('hidden'); 
+            loadProgress(); // Carrega o progresso salvo
+            // Pré-carrega as imagens do quiz para uma experiência mais suave
+            preloadImages(quizBackgroundImages); 
+            initialLoadScreen.classList.remove('hidden'); // Exibe a tela de carregamento inicial
+            homeScreen.classList.add('hidden'); // Garante que a tela inicial esteja oculta inicialmente
             
+            // Adiciona o evento de clique ao botão "Iniciar Quiz" para transitar para a tela inicial
             startAppButton.addEventListener('click', () => {
                 showScreen('home-screen'); 
             });
