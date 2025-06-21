@@ -13,17 +13,22 @@
             font-family: 'Inter', sans-serif;
         }
         
-        /* Ajuste a transparência para ver a imagem de fundo de forma mais clara */
+        /* Ajuste a transparência para ver a imagem de fundo de forma mais clara e remova o blur */
         .glassmorphism {
-            background: rgba(0, 0, 0, 0.7); /* Opacidade aumentada para 70% para diminuir a transparência */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.2); /* Opacidade reduzida para 20% para mais transparência */
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Estilo específico para o racional para ser menos transparente e mais fácil de ler */
+        #rationale-text {
+            background: rgba(0, 0, 0, 0.9); /* Fundo quase sólido para o racional */
+            padding: 0.75rem; /* Adiciona um pouco de padding para melhor visualização */
+            border-radius: 0.5rem; /* Arredonda as bordas */
+            color: white; /* Garante que o texto seja branco para contraste */
         }
         /* Estilo para a tela de carregamento inicial com a imagem de fundo exclusiva */
         .background-initial {
             /* URL da imagem de fundo da tela inicial apontando para o GitHub Pages */
-            background-image: url('https://filhodegleb.github.io/quizz-biblico/imagens/Design%20sem%20nome%20(1).png');
+            background-image: url('https://filhodegleb.github.io/quizz-biblico/imagens/depositphotos_818199042-stock-illustration-simple-minimalist-biblical-vector-illustration-Picsart-AiImageEnhancer.jpg');
             background-size: cover;
             background-position: center;
         }
@@ -31,22 +36,112 @@
         .text-shadow {
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Sombra escura para contraste */
         }
+
+        /* Estilos para a barra de tempo */
+        #time-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        #time-bar {
+            height: 100%;
+            width: 100%;
+            background-color: #34D399; /* Cor verde inicial para o progresso */
+            border-radius: 5px;
+            /* A transição será controlada via JavaScript para maior precisão */
+        }
+
+        /* Novo estilo para o contêiner individual de cada estrela (efeito de vidro) */
+        .star-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px; /* Tamanho padrão do contêiner da estrela */
+            height: 60px;
+            margin: 0 5px; /* Espaçamento entre as estrelas */
+            border-radius: 50%; /* Torna o contêiner redondo */
+            background: rgba(0, 0, 0, 0.1); /* Fundo transparente */
+            border: 1px solid rgba(255, 255, 255, 0.05); /* Borda sutil */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1); /* Sombra para profundidade */
+            backdrop-filter: blur(2px); /* Efeito de vidro sutil */
+            -webkit-backdrop-filter: blur(2px); /* Para compatibilidade com Safari */
+            font-size: 2.5rem; /* Tamanho da estrela dentro do círculo */
+            transition: all 0.3s ease; /* Transição suave para mudanças de tamanho/cor */
+        }
+
+        /* Estilo para a estrela do meio (maior, sem brilho) */
+        .star-item.middle-star {
+            font-size: 3.5rem; /* Ajusta o tamanho da estrela do meio */
+            width: 80px; /* Torna o contêiner da estrela do meio maior */
+            height: 80px;
+            /* O brilho (text-shadow e animation) foi removido aqui como solicitado */
+        }
+
+        /* Estilo para o cilindro de porcentagem - AGORA HORIZONTAL */
+        #cylinder-container, #victory-cylinder-container { /* Aplica a ambos os cilindros */
+            width: 80%; /* Mais largo */
+            height: 50px; /* Mais baixo */
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 25px; /* Metade da altura para parecer cilíndrico horizontal */
+            overflow: hidden;
+            display: flex;
+            align-items: center; /* Centraliza verticalmente o conteúdo */
+            margin: 1rem auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            position: relative; /* Necessário para posicionar o texto da porcentagem */
+        }
+
+        #cylinder-fill, #victory-cylinder-fill { /* Aplica a ambos os preenchimentos */
+            height: 100%; /* Preenche a altura total do cilindro */
+            width: 0%; /* Começa vazio, preenche horizontalmente */
+            transition: width 1s ease-out; /* Transição suave para o preenchimento */
+            border-radius: 25px; /* Mantém as bordas arredondadas */
+            position: absolute; /* Para que o preenchimento fique por baixo do texto */
+            left: 0;
+            top: 0;
+        }
+
+        #cylinder-percentage-text, #victory-cylinder-percentage-text { /* Aplica a ambos os textos */
+            position: absolute; /* Posiciona o texto sobre o cilindro */
+            width: 100%; /* Para que o texto se estenda por todo o contêiner */
+            text-align: center;
+            top: 50%; /* Centraliza verticalmente */
+            transform: translateY(-50%); /* Ajusta para um perfeito centramento vertical */
+            font-weight: bold;
+            color: white; /* Cor do texto da porcentagem */
+            z-index: 1; /* Garante que o texto fique acima do preenchimento */
+        }
     </style>
 </head>
 <body class="bg-slate-900 text-white">
 
     <!-- Música de Fundo da Tela Inicial -->
-    <!-- A fonte será definida via JavaScript para alternar entre as músicas -->
     <audio id="bg-music" loop>
         Seu navegador não suporta o elemento de áudio.
     </audio>
 
-    <!-- Tela de Carregamento/Inicialização (para interação inicial) -->
+    <!-- Música da Tela de Vitória -->
+    <audio id="victory-music">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <!-- Tela de Carregamento/Inicialização (para interação inicial e login simples) -->
     <div id="initial-load-screen" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900 background-initial">
-        <h1 class="text-4xl font-bold mb-6 text-white text-shadow animate-pulse text-center">Desafio Colégio Adventista Eunápolis</h1>
-        <button id="start-app-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl shadow-lg transition-all duration-300 transform hover:scale-105">
-            Iniciar Quiz
-        </button>
+        <h1 class="text-4xl font-bold mb-6 text-white text-shadow animate-pulse text-center">Quiz Bíblico</h1>
+        <div class="glassmorphism p-6 sm:p-8 rounded-xl shadow-2xl text-center">
+            <h2 class="text-2xl font-bold mb-4">Insira seu Nome</h2>
+            <input type="text" id="username-input" placeholder="Seu nome de jogador" class="w-full p-3 mb-4 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <button id="start-app-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                Iniciar Quiz
+            </button>
+        </div>
     </div>
 
     <!-- Tela Inicial (Menu de Tópicos) -->
@@ -92,28 +187,42 @@
             </div>
         </div>
         <div id="feedback-message-home" class="mt-4 text-center text-red-400"></div>
+        <!-- O botão "Pular para Tela de Vitória" foi removido daqui -->
     </div>
 
     <!-- Tela do Quiz -->
-    <div id="quiz-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center">
+    <div id="quiz-screen" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center hidden">
         <div id="quiz-container" class="w-full max-w-2xl glassmorphism p-6 sm:p-8 rounded-xl shadow-2xl">
             <div id="quiz-header" class="flex justify-between items-center mb-4">
                  <p id="progress-text" class="text-sm sm:text-base font-semibold text-slate-300">Pergunta 1 de 10</p>
                  <button onclick="showScreen('home-screen')" class="text-sm sm:text-base text-slate-300 hover:text-white py-1 px-2 rounded">Sair</button>
+            </div>
+            <div id="time-bar-container">
+                <div id="time-bar"></div>
             </div>
             <p id="question-text" class="text-lg sm:text-2xl font-semibold mb-6 text-center"></p>
             <div id="answer-options" class="grid grid-cols-1 gap-3 sm:gap-4">
                 <!-- Opções de resposta serão inseridas aqui -->
             </div>
              <div id="feedback-message" class="mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold"></div>
+             <p id="rationale-text" class="mt-2 text-center text-sm sm:text-base text-slate-300 italic"></p>
         </div>
     </div>
     
     <!-- Tela de Resultados do Bloco -->
-    <div id="results-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center">
+    <div id="results-screen" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center hidden">
         <div class="w-full max-w-md text-center glassmorphism p-6 sm:p-8 rounded-xl shadow-2xl">
             <h2 class="text-2xl sm:text-3xl font-bold mb-4">Fim do Bloco!</h2>
-            <p id="results-text" class="text-base sm:text-xl mb-6">Você acertou X de 10 perguntas.</p>
+            <div id="star-rating" class="flex justify-center items-center mb-6">
+                <!-- Stars will be inserted here by JS with their individual glass backgrounds -->
+            </div>
+            <p id="results-text" class="text-base sm:text-xl mb-2">Você acertou X de 10 perguntas.</p>
+            <p id="time-percentage-text" class="text-base sm:text-lg mb-4"></p>
+            <div id="cylinder-container">
+                <div id="cylinder-fill"></div>
+                <span id="cylinder-percentage-text"></span>
+            </div>
+            <p id="block-feedback-message" class="text-base sm:text-lg mb-6"></p>
             <div id="results-buttons" class="flex flex-col sm:flex-row gap-3 sm:gap-4">
                  <!-- Botões de continuar/voltar serão inseridos aqui -->
             </div>
@@ -121,14 +230,37 @@
     </div>
 
     <!-- Tela de Vitória Final -->
-    <div id="victory-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center">
+    <div id="victory-screen" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center hidden">
         <div class="w-full max-w-md text-center glassmorphism p-8 rounded-xl shadow-2xl">
             <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-green-300 animate-bounce">Vitória!</h2>
-            <p class="text-lg sm:text-xl mb-6 text-slate-200">Parabéns! Você completou este tópico com maestria.</p>
-            <p class="text-base sm:text-lg mb-8 text-slate-300 italic">
-                "Combati o bom combate, terminei a corrida, guardei a fé." - 2 Timóteo 4:7
+            <div id="victory-star-rating" class="flex justify-center items-center mb-6">
+                <!-- Stars will be inserted here by JS with their individual glass backgrounds -->
+            </div>
+            <p id="overall-score-text" class="text-lg sm:text-xl mb-4 text-slate-200">Pontuação Total: X/30</p>
+
+            <!-- Novo cilindro de porcentagem na tela de vitória -->
+            <div id="victory-cylinder-container" class="w-full max-w-xs mx-auto">
+                <div id="victory-cylinder-fill" class="h-full rounded-2xl transition-all duration-1000 ease-out absolute left-0 top-0"></div>
+                <span id="victory-cylinder-percentage-text" class="absolute w-full text-center top-1/2 -translate-y-1/2 font-bold text-white z-10"></span>
+            </div>
+            
+            <p class="text-base sm:text-lg mt-4 mb-8 text-slate-300 italic">
+                Obrigado por jogar! Que este jogo possa ter sido um instrumento para te levar mais próximo de Deus.
             </p>
-            <button onclick="showScreen('home-screen')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg">Voltar ao Menu Principal</button>
+
+            <!-- Container para ranking e botões -->
+            <div class="flex flex-col sm:flex-row justify-between items-center w-full mt-8">
+                <div id="victory-message-container" class="text-left w-full sm:w-1/2 mb-4 sm:mb-0">
+                    <p class="text-md sm:text-lg font-semibold text-slate-200">Ranking Local:</p>
+                    <ul id="leaderboard-list" class="text-left mt-2">
+                        <!-- Leaderboard items will be inserted here -->
+                    </ul>
+                </div>
+                <div class="w-full sm:w-1/2 flex flex-col items-center sm:items-end gap-3">
+                    <button id="next-topic-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">Próximo Tópico</button>
+                    <button id="back-to-menu-victory" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">Voltar ao Menu Principal</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -138,129 +270,172 @@
         const quizData = {
             geografia: [
                 // Bloco 1
-                { question: "Em qual rio Jesus foi batizado por João Batista?", answers: ["Rio Nilo", "Rio Jordão", "Rio Tigre", "Rio Eufrates"], correct: 1 },
-                { question: "Qual cidade é frequentemente chamada de 'Cidade de Davi'?", answers: ["Nazaré", "Jericó", "Jerusalém", "Belém"], correct: 2 },
-                { question: "Perto de qual mar Jesus realizou grande parte de seu ministério?", answers: ["Mar Morto", "Mar Vermelho", "Mar Mediterrâneo", "Mar da Galileia"], correct: 3 },
-                { question: "Em qual montanha Moisés recebeu os Dez Mandamentos?", answers: ["Monte Carmelo", "Monte das Oliveiras", "Monte Sinai", "Monte Hermom"], correct: 2 },
-                { question: "Qual era o nome da terra prometida por Deus a Abraão e seus descendentes?", answers: ["Egito", "Canaã", "Babilônia", "Assíria"], correct: 1 },
-                { question: "Qual cidade foi destruída junto com Gomorra?", answers: ["Ur", "Sodoma", "Nínive", "Babilônia"], correct: 1 },
-                { question: "O apóstolo Paulo naufragou na ilha de...?", answers: ["Creta", "Chipre", "Malta", "Patmos"], correct: 2 },
-                { question: "Qual foi a primeira cidade que os israelitas conquistaram em Canaã sob a liderança de Josué?", answers: ["Ai", "Jericó", "Jerusalém", "Hebron"], correct: 1 },
-                { question: "De qual cidade era o profeta Jonas quando fugiu de Deus?", answers: ["Jope", "Társis", "Nínive", "Babilônia"], correct: 0 },
-                { question: "Onde Jesus realizou seu primeiro milagre, transformando água em vinho?", answers: ["Cafarnaum", "Naim", "Caná", "Betânia"], correct: 2 },
+                { question: "Em qual rio Jesus foi batizado por João Batista?", answers: ["Rio Nilo", "Rio Jordão", "Rio Tigre", "Rio Eufrates"], correct: 1, rationale: "Jesus foi batizado por João Batista no Rio Jordão, um evento que marcou o início de seu ministério público." },
+                { question: "Qual cidade é frequentemente chamada de 'Cidade de Davi'?", answers: ["Nazaré", "Jericó", "Jerusalém", "Belém"], correct: 2, rationale: "Jerusalém é a cidade de Davi. Embora Belém seja conhecida como sua cidade natal, Jerusalém foi a capital de seu reino." },
+                { question: "Perto de qual mar Jesus realizou grande parte de seu ministério?", answers: ["Mar Morto", "Mar Vermelho", "Mar Mediterrâneo", "Mar da Galileia"], correct: 3, rationale: "Jesus realizou grande parte de seu ministério às margens do Mar da Galileia, onde chamou muitos de seus discípulos." },
+                { question: "Em qual montanha Moisés recebeu os Dez Mandamentos?", answers: ["Monte Carmelo", "Monte das Oliveiras", "Monte Sinai", "Monte Hermom"], correct: 2, rationale: "Moisés recebeu os Dez Mandamentos de Deus no Monte Sinai, também conhecido como Monte Horebe." },
+                { question: "Qual era o nome da terra prometida por Deus a Abraão e seus descendentes?", answers: ["Egito", "Canaã", "Babilônia", "Assíria"], correct: 1, rationale: "Canaã foi a terra que Deus prometeu a Abraão e seus descendentes, tornando-se a Terra Prometida para Israel." },
+                { question: "Qual cidade foi destruída junto com Gomorra?", answers: ["Ur", "Sodoma", "Nínive", "Babilônia"], correct: 1, rationale: "Sodoma foi destruída por Deus, juntamente com Gomorra, devido à sua grande impiedade e pecado." },
+                { question: "O apóstolo Paulo naufragou na ilha de...?", answers: ["Creta", "Chipre", "Malta", "Patmos"], correct: 2, rationale: "O apóstolo Paulo naufragou na ilha de Malta, onde ele e os outros sobreviveram e foram bem recebidos pelos habitantes locais." },
+                { question: "Qual foi a primeira cidade que os israelitas conquistaram em Canaã sob a liderança de Josué?", answers: ["Ai", "Jericó", "Jerusalém", "Hebron"], correct: 1, rationale: "Jericó foi a primeira cidade conquistada pelos israelitas em Canaã, cujas muralhas caíram após a obediência às instruções de Deus." },
+                { question: "De qual cidade era o profeta Jonas quando fugiu de Deus?", answers: ["Jope", "Társis", "Nínive", "Babilônia"], correct: 0, rationale: "Jonas era de Gate-Hefer, perto de Jope, o porto de onde ele tentou fugir de navio para Társis." },
+                { question: "Onde Jesus realizou seu primeiro milagre, transformando água em vinho?", answers: ["Cafarnaum", "Naim", "Caná", "Betânia"], correct: 2, rationale: "Jesus realizou seu primeiro milagre em Caná da Galileia, em um casamento, transformando água em vinho." },
                 // Bloco 2
-                { question: "Qual o nome do jardim onde Adão e Eva viveram?", answers: ["Jardim de Getsêmani", "Jardim do Éden", "Jardim do Rei", "Jardim de Susã"], correct: 1 },
-                { question: "Em qual país José se tornou governador?", answers: ["Israel", "Babilônia", "Egito", "Pérsia"], correct: 2 },
-                { question: "O Monte das Oliveiras fica próximo a qual cidade?", answers: ["Belém", "Jerusalém", "Jericó", "Samaria"], correct: 1 },
-                { question: "Em qual deserto os israelitas vagaram por 40 anos?", answers: ["Deserto da Judeia", "Deserto do Saara", "Deserto de Sinai", "Deserto da Arábia"], correct: 2 },
-                { question: "Qual rio foi dividido por Elias e Eliseu?", answers: ["Rio Quebar", "Rio Jordão", "Rio de Gion", "Rio Pisom"], correct: 1 },
-                { question: "Qual era a capital do Reino do Norte de Israel?", answers: ["Jerusalém", "Siquém", "Tirza", "Samaria"], correct: 3 },
-                { question: "A Torre de Babel foi construída na terra de...?", answers: ["Sinar", "Harã", "Midiã", "Parã"], correct: 0 },
-                { question: "De qual cidade Lídia, vendedora de púrpura, era?", answers: ["Filipos", "Tiatira", "Éfeso", "Colossos"], correct: 1 },
-                { question: "Qual cidade foi a capital do império de Nabucodonosor?", answers: ["Nínive", "Susa", "Babilônia", "Persépolis"], correct: 2 },
-                { question: "Onde Paulo estava quando escreveu a carta aos Filipenses?", answers: ["Em um navio", "No templo", "Em casa", "Na prisão"], correct: 3 },
+                { question: "Qual o nome do jardim onde Adão e Eva viveram?", answers: ["Jardim de Getsêmani", "Jardim do Éden", "Jardim do Rei", "Jardim de Susã"], correct: 1, rationale: "Adão e Eva viveram no Jardim do Éden, um paraíso criado por Deus para eles." },
+                { question: "Em qual país José se tornou governador?", answers: ["Israel", "Babilônia", "Egito", "Pérsia"], correct: 2, rationale: "José se tornou governador do Egito, sendo o segundo no comando, depois do Faraó." },
+                { question: "O Monte das Oliveiras fica próximo a qual cidade?", answers: ["Belém", "Jerusalém", "Jericó", "Samaria"], correct: 1, rationale: "O Monte das Oliveiras fica a leste de Jerusalém, sendo um local significativo para muitos eventos bíblicos, incluindo a ascensão de Jesus." },
+                { question: "Em qual deserto os israelitas vagaram por 40 anos?", answers: ["Deserto da Judeia", "Deserto do Saara", "Deserto de Sinai", "Deserto da Arábia"], correct: 2, rationale: "Os israelitas vagaram por 40 anos no Deserto de Sinai, após saírem do Egito." },
+                { question: "Qual rio foi dividido por Elias e Eliseu?", answers: ["Rio Quebar", "Rio Jordão", "Rio de Gion", "Rio Pisom"], correct: 1, rationale: "Elias e Eliseu dividiram as águas do Rio Jordão antes de Elias ser levado ao céu." },
+                { question: "Qual era a capital do Reino do Norte de Israel?", answers: ["Jerusalém", "Siquém", "Tirza", "Samaria"], correct: 3, rationale: "Samaria tornou-se a capital do Reino do Norte de Israel após a divisão do reino." },
+                { question: "A Torre de Babel foi construída na terra de...?", answers: ["Sinar", "Harã", "Midiã", "Parã"], correct: 0, rationale: "A Torre de Babel foi construída na terra de Sinar, uma região na Mesopotâmia." },
+                { question: "De qual cidade Lídia, vendedora de púrpura, era?", answers: ["Filipos", "Tiatira", "Éfeso", "Colossos"], correct: 1, rationale: "Lídia, uma mulher temente a Deus, era de Tiatira e foi a primeira convertida de Paulo na Europa, em Filipos." },
+                { question: "Qual cidade foi a capital do império de Nabucodonosor?", answers: ["Nínive", "Susa", "Babilônia", "Persépolis"], correct: 2, rationale: "Babilônia foi a capital do império neobabilônico de Nabucodonosor, conhecida por sua magnificência e pela destruição de Jerusalém." },
+                { question: "Onde Paulo estava quando escreveu a carta aos Filipenses?", answers: ["Em um navio", "No templo", "Em casa", "Na prisão"], correct: 3, rationale: "Paulo escreveu a carta aos Filipenses enquanto estava na prisão, encorajando-os e expressando sua alegria em Cristo." },
                  // Bloco 3
-                { question: "Qual é o mar que os israelitas atravessaram ao fugir do Egito?", answers: ["Mar da Galileia", "Mar Morto", "Mar Vermelho", "Mar Mediterrâneo"], correct: 2 },
-                { question: "Em qual cidade Paulo teve sua conversão a caminho?", answers: ["Jerusalém", "Damasco", "Antioquia", "Tarso"], correct: 1 },
-                { question: "A cidade de Éfeso era famosa pelo templo de qual deusa grega?", answers: ["Atena", "Afrodite", "Hera", "Ártemis"], correct: 3 },
-                { question: "Qual era a cidade natal de Abraão?", answers: ["Harã", "Siquém", "Ur dos Caldeus", "Betel"], correct: 2 },
-                { question: "Para qual cidade o profeta Elias fugiu da rainha Jezabel?", answers: ["Jezreel", "Berseba", "Damasco", "Tiro"], correct: 1 },
-                { question: "Qual o nome do poço onde Jesus conversou com a mulher samaritana?", answers: ["Poço de Hagar", "Poço de Mara", "Poço de Jacó", "Poço de Bete-Esda"], correct: 2 },
-                { question: "A ilha de Patmos é conhecida por ser o local onde qual livro foi escrito?", answers: ["Atos", "Apocalipse", "Hebreus", "Romanos"], correct: 1 },
-                { question: "Qual o rio que banhava o Jardim do Éden?", answers: ["Não é mencionado", "Rio Eufrates", "Rio Nilo", "Rio Tigre"], correct: 1 },
-                { question: "Qual o nome do vale onde Davi lutou com Golias?", answers: ["Vale de Acor", "Vale de Jezreel", "Vale de Sidim", "Vale de Elá"], correct: 3 },
-                { question: "Qual cidade era o centro do ministério de Paulo na Ásia Menor?", answers: ["Antioquia", "Tarso", "Éfeso", "Derbe"], correct: 0 },
+                { question: "Qual é o mar que os israelitas atravessaram ao fugir do Egito?", answers: ["Mar da Galileia", "Mar Morto", "Mar Vermelho", "Mar Mediterrâneo"], correct: 2, rationale: "Os israelitas atravessaram o Mar Vermelho milagrosamente, fugindo da perseguição egípcia." },
+                { question: "Em qual cidade Paulo teve sua conversão a caminho?", answers: ["Jerusalém", "Damasco", "Antioquia", "Tarso"], correct: 1, rationale: "Saulo (depois Paulo) teve sua conversão a caminho de Damasco, onde ele iria perseguir cristãos." },
+                { question: "A cidade de Éfeso era famosa pelo templo de qual deusa grega?", answers: ["Atena", "Afrodite", "Hera", "Ártemis"], correct: 3, rationale: "Éfeso era famosa pelo Templo de Ártemis, uma das Sete Maravilhas do Mundo Antigo, e era um centro de adoração a essa deusa." },
+                { question: "Qual era a cidade natal de Abraão?", answers: ["Harã", "Siquém", "Ur dos Caldeus", "Betel"], correct: 2, rationale: "Abraão era originário de Ur dos Caldeus, de onde Deus o chamou para ir para uma terra que lhe seria mostrada." },
+                { question: "Para qual cidade o profeta Elias fugiu da rainha Jezabel?", answers: ["Jezreel", "Berseba", "Damasco", "Tiro"], correct: 1, rationale: "Após seu triunfo sobre os profetas de Baal, Elias fugiu para Berseba por medo da rainha Jezabel." },
+                { question: "Qual o nome do poço onde Jesus conversou com a mulher samaritana?", answers: ["Poço de Hagar", "Poço de Mara", "Poço de Jacó", "Poço de Bete-Esda"], correct: 2, rationale: "Jesus conversou com a mulher samaritana no Poço de Jacó, perto da cidade de Sicar." },
+                { question: "A ilha de Patmos é conhecida por ser o local onde qual livro foi escrito?", answers: ["Atos", "Apocalipse", "Hebreus", "Romanos"], correct: 1, rationale: "O apóstolo João foi exilado na ilha de Patmos, onde recebeu as visões que compõem o livro do Apocalipse." },
+                { question: "Qual o rio que banhava o Jardim do Éden?", answers: ["Não é mencionado", "Rio Eufrates", "Rio Nilo", "Rio Tigre"], correct: 1, rationale: "O Jardim do Éden era banhado por um rio que se dividia em quatro cabeceiras: Pisom, Giom, Tigre e Eufrates. Portanto, o Eufrates é um dos rios que o banhavam." },
+                { question: "Qual o nome do vale onde Davi lutou com Golias?", answers: ["Vale de Acor", "Vale de Jezreel", "Vale de Sidim", "Vale de Elá"], correct: 3, rationale: "Davi derrotou o gigante Golias no Vale de Elá, um evento marcante na história de Israel." },
+                { question: "Qual cidade era o centro do ministério de Paulo na Ásia Menor?", answers: ["Antioquia", "Tarso", "Éfeso", "Derbe"], correct: 0, rationale: "Antioquia da Síria foi um importante centro missionário para Paulo, de onde ele partiu em suas viagens." },
             ],
             pessoas: [
                 // Bloco 1
-                { question: "Quem foi o primeiro homem criado por Deus?", answers: ["Caim", "Sete", "Adão", "Noé"], correct: 2 },
-                { question: "Quem construiu a arca para sobreviver ao Dilúvio?", answers: ["Noé", "Matusalém", "Lameque", "Jafé"], correct: 0 },
-                { question: "Quem é conhecido como o 'Pai da Fé'?", answers: ["Isaque", "Jacó", "Moisés", "Abraão"], correct: 3 },
-                { question: "Qual dos filhos de Jacó foi vendido como escravo por seus irmãos?", answers: ["Rúben", "José", "Benjamim", "Judá"], correct: 1 },
-                { question: "Quem liderou os israelitas para fora do Egito?", answers: ["Josué", "Arão", "Moisés", "Calebe"], correct: 2 },
-                { question: "Quem derrotou o gigante Golias?", answers: ["Saul", "Davi", "Jônatas", "Abner"], correct: 1 },
-                { question: "Qual profeta foi alimentado por corvos?", answers: ["Eliseu", "Elias", "Isaías", "Jeremias"], correct: 1 },
-                { question: "Quem foi a única juíza mulher de Israel?", answers: ["Ester", "Rute", "Débora", "Miriã"], correct: 2 },
-                { question: "Qual apóstolo negou Jesus três vezes?", answers: ["Judas", "Tomé", "João", "Pedro"], correct: 3 },
-                { question: "Quem é o autor da maior parte dos Salmos?", answers: ["Salomão", "Asafe", "Davi", "Moisés"], correct: 2 },
+                { question: "Quem foi o primeiro homem criado por Deus?", answers: ["Caim", "Sete", "Adão", "Noé"], correct: 2, rationale: "Adão foi o primeiro homem criado por Deus, formado do pó da terra e a quem Deus soprou o fôlego da vida." },
+                { question: "Quem construiu a arca para sobreviver ao Dilúvio?", answers: ["Noé", "Matusalém", "Lameque", "Jafé"], correct: 0, rationale: "Noé foi escolhido por Deus para construir a arca e salvar sua família e os animais do Dilúvio universal." },
+                { question: "Quem é conhecido como o 'Pai da Fé'?", answers: ["Isaque", "Jacó", "Moisés", "Abraão"], correct: 3, rationale: "Abraão é amplamente conhecido como o 'Pai da Fé' devido à sua inabalável confiança e obediência a Deus." },
+                { question: "Qual dos filhos de Jacó foi vendido como escravo por seus irmãos?", answers: ["Rúben", "José", "Benjamim", "Judá"], correct: 1, rationale: "José foi vendido como escravo por seus irmãos invejosos, mas Deus o usou para salvar sua família da fome." },
+                { question: "Quem liderou os israelitas para fora do Egito?", answers: ["Josué", "Arão", "Moisés", "Calebe"], correct: 2, rationale: "Moisés foi o líder divinamente escolhido para tirar os israelitas da escravidão no Egito e guiá-los à Terra Prometida." },
+                { question: "Quem derrotou o gigante Golias?", answers: ["Saul", "Davi", "Jônatas", "Abner"], correct: 1, rationale: "Davi, ainda um jovem pastor, derrotou o gigante filisteu Golias com uma funda e uma pedra, demonstrando sua fé em Deus." },
+                { question: "Qual profeta foi alimentado por corvos?", answers: ["Eliseu", "Elias", "Isaías", "Jeremias"], correct: 1, rationale: "Elias foi alimentado por corvos no ribeiro de Querite durante um período de seca, por ordem de Deus." },
+                { question: "Quem foi a única juíza mulher de Israel?", answers: ["Ester", "Rute", "Débora", "Miriã"], correct: 2, rationale: "Débora foi uma profetisa e a única mulher a servir como juíza de Israel, liderando o povo com sabedoria." },
+                { question: "Qual apóstolo negou Jesus três vezes?", answers: ["Judas", "Tomé", "João", "Pedro"], correct: 3, rationale: "Pedro, apesar de sua promessa de lealdade, negou Jesus três vezes antes do galo cantar, como Jesus havia predito." },
+                { question: "Quem é o autor da maior parte dos Salmos?", answers: ["Salomão", "Asafe", "Davi", "Moisés"], correct: 2, rationale: "O Rei Davi é tradicionalmente creditado como o autor da maioria dos Salmos, expressando uma vasta gama de emoções e louvores a Deus." },
                  // Bloco 2
-                { question: "Quem foi a esposa de Isaque?", answers: ["Sara", "Rebeca", "Lia", "Raquel"], correct: 1 },
-                { question: "Qual rei construiu o primeiro Templo em Jerusalém?", answers: ["Davi", "Salomão", "Ezequias", "Josias"], correct: 1 },
-                { question: "Quem foi o profeta que ungiu Davi como rei?", answers: ["Natã", "Samuel", "Elias", "Gad"], correct: 1 },
-                { question: "Qual era a profissão de Mateus (Levi) antes de seguir Jesus?", answers: ["Pescador", "Carpinteiro", "Coletor de impostos", "Fariseu"], correct: 2 },
-                { question: "Quem era o irmão de Moisés que se tornou o primeiro sumo sacerdote?", answers: ["Eleazar", "Nadabe", "Arão", "Ita"], correct: 2 },
-                { question: "Qual rainha judia salvou seu povo da destruição?", answers: ["Jezabel", "Atalia", "Ester", "Vasti"], correct: 2 },
-                { question: "Quem foi o homem mais forte da Bíblia?", answers: ["Golias", "Sansão", "Gideão", "Benaia"], correct: 1 },
-                { question: "Quem foi o primeiro mártir cristão?", answers: ["Tiago", "Paulo", "Estêvão", "Pedro"], correct: 2 },
-                { question: "Quem foi o sogro de Moisés?", answers: ["Reuel", "Jetro", "Ambos estão corretos", "Nenhum está correto"], correct: 2 }, // Jetro também era chamado Reuel
-                { question: "Qual profeta foi lançado numa cova de leões?", answers: ["Jeremias", "Ezequiel", "Daniel", "Oseias"], correct: 2 },
+                { question: "Quem foi a esposa de Isaque?", answers: ["Sara", "Rebeca", "Lia", "Raquel"], correct: 1, rationale: "Rebeca foi a esposa de Isaque, escolhida por Deus e trazida por Eliezer, servo de Abraão." },
+                { question: "Qual rei construiu o primeiro Templo em Jerusalém?", answers: ["Davi", "Salomão", "Ezequias", "Josias"], correct: 1, rationale: "O Rei Salomão, filho de Davi, construiu o primeiro Templo em Jerusalém, uma obra grandiosa dedicada a Deus." },
+                { question: "Quem foi o profeta que ungiu Davi como rei?", answers: ["Natã", "Samuel", "Elias", "Gad"], correct: 1, rationale: "O profeta Samuel, a mando de Deus, ungiu Davi como rei de Israel enquanto Saul ainda reinava." },
+                { question: "Qual era a profissão de Mateus (Levi) antes de seguir Jesus?", answers: ["Pescador", "Carpinteiro", "Coletor de impostos", "Fariseu"], correct: 2, rationale: "Mateus, também conhecido como Levi, era um coletor de impostos antes de Jesus o chamar para ser um de seus discípulos." },
+                { question: "Quem era o irmão de Moisés que se tornou o primeiro sumo sacerdote?", answers: ["Eleazar", "Nadabe", "Arão", "Ita"], correct: 2, rationale: "Arão, irmão de Moisés, foi o primeiro sumo sacerdote de Israel, consagrado por Deus para servir no Tabernáculo." },
+                { question: "Qual rainha judia salvou seu povo da destruição?", answers: ["Jezabel", "Atalia", "Ester", "Vasti"], correct: 2, rationale: "A Rainha Ester, uma judia órfã que se tornou rainha da Pérsia, arriscou sua vida para salvar seu povo do extermínio, orquestrado por Hamã." },
+                { question: "Quem foi o homem mais forte da Bíblia?", answers: ["Golias", "Sansão", "Gideão", "Benaia"], correct: 1, rationale: "Sansão, um juiz de Israel, era dotado de força sobrenatural por Deus, usada para libertar seu povo dos filisteus." },
+                { question: "Quem foi o primeiro mártir cristão?", answers: ["Tiago", "Paulo", "Estêvão", "Pedro"], correct: 2, rationale: "Estêvão foi o primeiro mártir cristão, apedrejado por sua fé após dar um poderoso testemunho." },
+                { question: "Quem foi o sogro de Moisés?", answers: ["Reuel", "Jetro", "Ambos estão corretos", "Nenhum está correto"], correct: 2, rationale: "Moisés teve dois sogros mencionados, Reuel e Jetro. Jetro era sacerdote de Midiã e sogro de Moisés, sendo Reuel seu outro nome ou título." },
+                { question: "Qual profeta foi lançado numa cova de leões?", answers: ["Jeremias", "Ezequiel", "Daniel", "Oseias"], correct: 2, rationale: "Daniel foi lançado na cova dos leões por sua devoção a Deus, mas foi milagrosamente salvo pela intervenção divina." },
                  // Bloco 3
-                { question: "Quem foi o profeta que casou com uma prostituta como um ato simbólico?", answers: ["Oseias", "Amós", "Jonas", "Miqueias"], correct: 0 },
-                { question: "Quem era o pai de João Batista?", answers: ["Simeão", "Anás", "José", "Zacarias"], correct: 3 },
-                { question: "Qual dos filhos de Noé é ancestral do povo de Israel?", answers: ["Sem", "Cam", "Jafé", "Nenhum deles"], correct: 0 },
-                { question: "Quem foi o sucessor de Moisés na liderança de Israel?", answers: ["Calebe", "Josué", "Arão", "Gideão"], correct: 1 },
-                { question: "Quem interpretou os sonhos do Faraó no Egito?", answers: ["Daniel", "José", "Moisés", "Abraão"], correct: 1 },
-                { question: "Quem foi a mulher de Ló que se transformou em uma estátua de sal?", answers: ["Não é nomeada", "Edna", "Ada", "Lia"], correct: 0 },
-                { question: "Qual o nome do apóstolo que substituiu Judas Iscariotes?", answers: ["Barnabé", "Silas", "Apolo", "Matias"], correct: 3 },
-                { question: "Quem era o rei da Babilônia quando Daniel estava lá?", answers: ["Ciro", "Dario", "Nabucodonosor", "Belsazar"], correct: 2 },
-                { question: "Quem foi a mãe de Samuel?", answers: ["Penina", "Ana", "Raquel", "Elisabete"], correct: 1 },
-                { question: "Qual era o nome do irmão de Marta e Maria que Jesus ressuscitou?", answers: ["Simão", "Lázaro", "Filipe", "André"], correct: 1 }
+                { question: "Quem foi o profeta que casou com uma prostituta como um ato simbólico?", answers: ["Oseias", "Amós", "Jonas", "Miqueias"], correct: 0, rationale: "Oseias casou-se com uma prostituta chamada Gômer, um ato simbólico da infidelidade de Israel para com Deus e o amor redentor de Deus por eles." },
+                { question: "Quem era o pai de João Batista?", answers: ["Simeão", "Anás", "José", "Zacarias"], correct: 3, rationale: "Zacarias, um sacerdote, era o pai de João Batista, cuja concepção e nascimento foram anunciados por um anjo." },
+                { question: "Qual dos filhos de Noé é ancestral do povo de Israel?", answers: ["Sem", "Cam", "Jafé", "Nenhum deles"], correct: 0, rationale: "Sem é o ancestral de muitas nações semitas, incluindo o povo de Israel, através de Abraão." },
+                { question: "Quem foi o sucessor de Moisés na liderança de Israel?", answers: ["Calebe", "Josué", "Arão", "Gideão"], correct: 1, rationale: "Josué foi o sucessor de Moisés, escolhido por Deus para guiar os israelitas na conquista da Terra Prometida." },
+                { question: "Quem interpretou os sonhos do Faraó no Egito?", answers: ["Daniel", "José", "Moisés", "Abraão"], correct: 1, rationale: "José, com a sabedoria dada por Deus, interpretou os sonhos do Faraó, o que o levou a se tornar governador do Egito." },
+                { question: "Quem foi a mulher de Ló que se transformou em uma estátua de sal?", answers: ["Não é nomeada", "Edna", "Ada", "Lia"], correct: 0, rationale: "A mulher de Ló não é nomeada na Bíblia, mas foi transformada em uma estátua de sal por olhar para trás durante a destruição de Sodoma e Gomorra." },
+                { question: "Qual o nome do apóstolo que substituiu Judas Iscariotes?", answers: ["Barnabé", "Silas", "Apolo", "Matias"], correct: 3, rationale: "Matias foi escolhido por sorteio pelos apóstolos para substituir Judas Iscariotes, completando o número de doze apóstolos." },
+                { question: "Quem era o rei da Babilônia quando Daniel estava lá?", answers: ["Ciro", "Dario", "Nabucodonosor", "Belsazar"], correct: 2, rationale: "Nabucodonosor foi o rei da Babilônia que levou Daniel e muitos outros judeus cativos para a Babilônia." },
+                { question: "Quem foi a mãe de Samuel?", answers: ["Penina", "Ana", "Raquel", "Elisabete"], correct: 1, rationale: "Ana era a mãe de Samuel. Ela era estéril e orou fervorosamente a Deus por um filho, prometendo dedicá-lo ao Senhor." },
+                { question: "Qual era o nome do irmão de Marta e Maria que Jesus ressuscitou?", answers: ["Simão", "Lázaro", "Filipe", "André"], correct: 1, rationale: "Lázaro era o irmão de Marta e Maria, a quem Jesus ressuscitou dos mortos, demonstrando seu poder sobre a morte." }
             ],
             eventos: [
                 // Bloco 1
-                { question: "Qual evento marcou o início do ministério público de Jesus?", answers: ["A Transfiguração", "A Tentação no Deserto", "Seu Batismo", "A Última Ceia"], correct: 2 },
-                { question: "Qual foi a primeira praga enviada ao Egito?", answers: ["Gafanhotos", "Trevas", "Morte dos primogênitos", "Água em sangue"], correct: 3 },
-                { question: "O que os israelitas estavam fazendo quando Moisés desceu do Monte Sinai com os Dez Mandamentos?", answers: ["Orando", "Adorando um bezerro de ouro", "Construindo o tabernáculo", "Descansando"], correct: 1 },
-                { question: "Qual evento é comemorado na Páscoa judaica?", answers: ["A criação do mundo", "A entrega da Lei", "A libertação do Egito", "A conquista de Canaã"], correct: 2 },
-                { question: "O que aconteceu no dia de Pentecostes, registrado no livro de Atos?", answers: ["A ascensão de Jesus", "A ressurreição de Lázaro", "O derramamento do Espírito Santo", "A conversão de Paulo"], correct: 2 },
-                { question: "Qual evento levou à dispersão da humanidade por toda a Terra?", answers: ["O Dilúvio", "A destruição de Sodoma", "A Torre de Babel", "A escravidão no Egito"], correct: 2 },
-                { question: "Em qual evento Jesus foi glorificado na presença de Pedro, Tiago e João?", answers: ["No Sermão da Montanha", "Na Transfiguração", "Na multiplicação dos pães", "Na cura do cego Bartimeu"], correct: 1 },
-                { question: "A caída dos muros de qual cidade ocorreu após os israelitas marcharem ao seu redor?", answers: ["Jerusalém", "Jericó", "Babilônia", "Ai"], correct: 1 },
-                { question: "O que aconteceu quando Paulo e Silas estavam presos em Filipos?", answers: ["Eles fugiram", "Um anjo os libertou", "Um terremoto abriu as portas da prisão", "O carcereiro os soltou"], correct: 2 },
-                { question: "Qual foi o sinal da aliança de Deus com Noé após o Dilúvio?", answers: ["A pomba", "O ramo de oliveira", "A circuncisão", "O arco-íris"], correct: 3 },
+                { question: "Qual evento marcou o início do ministério público de Jesus?", answers: ["A Transfiguração", "A Tentação no Deserto", "Seu Batismo", "A Última Ceia"], correct: 2, rationale: "O batismo de Jesus por João Batista no Rio Jordão, um evento que marcou o início de seu ministério público." },
+                { question: "Qual foi a primeira praga enviada ao Egito?", answers: ["Gafanhotos", "Trevas", "Morte dos primogênitos", "Água em sangue"], correct: 3, rationale: "A primeira praga que Deus enviou ao Egito foi a transformação de toda a água em sangue, um julgamento contra os deuses egípcios." },
+                { question: "O que os israelitas estavam fazendo quando Moisés desceu do Monte Sinai com os Dez Mandamentos?", answers: ["Orando", "Adorando um bezerro de ouro", "Construindo o tabernáculo", "Descansando"], correct: 1, rationale: "Enquanto Moisés recebia os mandamentos, os israelitas, impacientes, fizeram um bezerro de ouro para adorar, o que provocou a ira de Deus." },
+                { question: "Qual evento é comemorado na Páscoa judaica?", answers: ["A criação do mundo", "A entrega da Lei", "A libertação do Egito", "A conquista de Canaã"], correct: 2, rationale: "A Páscoa judaica comemora a libertação milagrosa dos israelitas da escravidão no Egito, um evento central na história judaica." },
+                { question: "O que aconteceu no dia de Pentecostes, registrado no livro de Atos?", answers: ["A ascensão de Jesus", "A ressurreição de Lázaro", "O derramamento do Espírito Santo", "A conversão de Paulo"], correct: 2, rationale: "No dia de Pentecostes, o Espírito Santo foi derramado sobre os discípulos, capacitando-os a pregar o evangelho em diferentes línguas, como registrado em Atos 2." },
+                { question: "Qual evento levou à dispersão da humanidade por toda a Terra?", answers: ["O Dilúvio", "A destruição de Sodoma", "A Torre de Babel", "A escravidão no Egito"], correct: 2, rationale: "A construção da Torre de Babel foi interrompida por Deus, que confundiu as línguas dos construtores, resultando na dispersão da humanidade por toda a Terra." },
+                { question: "Em qual evento Jesus foi glorificado na presença de Pedro, Tiago e João?", answers: ["No Sermão da Montanha", "Na Transfiguração", "Na multiplicação dos pães", "Na cura do cego Bartimeu"], correct: 1, rationale: "A Transfiguração foi o evento em que Jesus revelou sua glória divina a Pedro, Tiago e João, aparecendo com Moisés e Elias no monte." },
+                { question: "A caída dos muros de qual cidade ocorreu após os israelitas marcharem ao seu redor?", answers: ["Jerusalém", "Jericó", "Babilônia", "Ai"], correct: 1, rationale: "Os muros de Jericó caíram milagrosamente após os israelitas marcharem ao redor da cidade por sete dias, seguindo as instruções de Deus." },
+                { question: "O que aconteceu quando Paulo e Silas estavam presos em Filipos?", answers: ["Eles fugiram", "Um anjo os libertou", "Um terremoto abriu as portas da prisão", "O carcereiro os soltou"], correct: 2, rationale: "Enquanto Paulo e Silas oravam e cantavam na prisão de Filipos, um terremoto abriu as portas e soltou as correntes, levando à conversão do carcereiro." },
+                { question: "Qual foi o sinal da aliança de Deus com Noé após o Dilúvio?", answers: ["A pomba", "O ramo de oliveira", "A circuncisão", "O arco-íris"], correct: 3, rationale: "O arco-íris foi o sinal da aliança de Deus com Noé e toda a humanidade, prometendo nunca mais destruir a Terra com um dilúvio." },
                  // Bloco 2
-                { question: "Qual evento é conhecido como 'A Última Ceia'?", answers: ["A primeira refeição de Jesus com os discípulos", "A refeição onde instituiu a Eucaristia", "A multiplicação dos pães", "A refeição na casa de Zaqueu"], correct: 1 },
-                { question: "Qual foi a décima e última praga do Egito?", answers: ["Piolhos", "Trevas", "Morte dos primogênitos", "Chuva de pedras"], correct: 2 },
-                { question: "Qual evento levou José a se tornar governador do Egito?", answers: ["Sua venda pelos irmãos", "Sua sabedoria", "Sua interpretação dos sonhos do Faraó", "Sua fuga da prisão"], correct: 2 },
-                { question: "O que marcou a separação entre o Reino do Norte (Israel) e o Reino do Sul (Judá)?", answers: ["A morte de Davi", "A morte de Salomão", "A conquista assíria", "A idolatria de Jeroboão"], correct: 1 },
-                { question: "Qual evento foi o teste final da fé de Abraão por Deus?", answers: ["Sair de sua terra", "A circuncisão", "Oferecer seu filho Isaque em sacrifício", "Lutar contra quatro reis"], correct: 2 },
-                { question: "O que aconteceu no Monte Carmelo entre Elias e os profetas de Baal?", answers: ["Uma corrida", "Um debate", "Um desafio de sacrifício com fogo", "Uma batalha"], correct: 2 },
-                { question: "Qual evento levou o rei Davi a escrever o Salmo 51?", answers: ["Sua vitória sobre Golias", "Sua unção como rei", "Seu arrependimento pelo pecado com Bate-Seba", "A morte de seu filho Absalão"], correct: 2 },
-                { question: "A 'dedicação do Templo' foi um grande evento no reinado de qual rei?", answers: ["Davi", "Josias", "Ezequias", "Salomão"], correct: 3 },
-                { question: "Qual evento marca o início do exílio babilônico para o Reino de Judá?", answers: ["A destruição de Samaria", "A queda de Jerusalém e do Templo", "A ascensão do rei Ciro", "A profecia de Jeremias"], correct: 1 },
-                { question: "O que Jesus fez na casa de Zaqueu que marcou a vida dele?", answers: ["Curou-o", "Expulsou demônios", "Comeu com ele e ofereceu salvação", "Contou uma parábola"], correct: 2 },
+                { question: "Qual evento é conhecido como 'A Última Ceia'?", answers: ["A primeira refeição de Jesus com os discípulos", "A refeição onde instituiu a Eucaristia", "A multiplicação dos pães", "A refeição na casa de Zaqueu"], correct: 1, rationale: "A Última Ceia foi a refeição de Páscoa de Jesus com seus discípulos, onde ele instituiu a Ceia do Senhor (Eucaristia)." },
+                { question: "Qual foi a décima e última praga do Egito?", answers: ["Piolhos", "Trevas", "Morte dos primogênitos", "Chuva de pedras"], correct: 2, rationale: "A décima e última praga do Egito foi a morte dos primogênitos, que finalmente convenceu Faraó a libertar os israelitas." },
+                { question: "Qual evento levou José a se tornar governador do Egito?", answers: ["Sua venda pelos irmãos", "Sua sabedoria", "Sua interpretação dos sonhos do Faraó", "Sua fuga da prisão"], correct: 2, rationale: "A capacidade de José de interpretar os sonhos do Faraó sobre a fome iminente o levou a se tornar governador do Egito." },
+                { question: "O que marcou a separação entre o Reino do Norte (Israel) e o Reino do Sul (Judá)?", answers: ["A morte de Davi", "A morte de Salomão", "A conquista assíria", "A idolatria de Jeroboão"], correct: 1, rationale: "Após a morte de Salomão, a opressão de seu filho Roboão levou à revolta das tribos do norte e à divisão do reino." },
+                { question: "Qual evento foi o teste final da fé de Abraão por Deus?", answers: ["Sair de sua terra", "A circuncisão", "Oferecer seu filho Isaque em sacrifício", "Lutar contra quatro reis"], correct: 2, rationale: "O teste final da fé de Abraão foi quando Deus lhe pediu para sacrificar seu filho Isaque, mostrando sua total obediência." },
+                { question: "O que aconteceu no Monte Carmelo entre Elias e os profetas de Baal?", answers: ["Uma corrida", "Havia um grande debate", "Um desafio de sacrifício com fogo", "Uma batalha"], correct: 2, rationale: "Elias desafiou os profetas de Baal no Monte Carmelo a invocar fogo para consumir um sacrifício, provando que só o Senhor é Deus." },
+                { question: "Qual evento levou o rei Davi a escrever o Salmo 51?", answers: ["Sua vitória sobre Golias", "Sua unção como rei", "Seu arrependimento pelo pecado com Bate-Seba", "A morte de seu filho Absalão"], correct: 2, rationale: "Davi escreveu o Salmo 51 como uma oração de profundo arrependimento após seu pecado com Bate-Seba e Urias." },
+                { question: "A 'dedicação do Templo' foi um grande evento no reinado de qual rei?", answers: ["Davi", "Josias", "Ezequias", "Salomão"], correct: 3, rationale: "A dedicação do Templo de Jerusalém foi um evento monumental realizado pelo Rei Salomão, após sua construção." },
+                { question: "Qual evento marca o início do exílio babilônico para o Reino de Judá?", answers: ["A destruição de Samaria", "A queda de Jerusalém e do Templo", "A ascensão do rei Ciro", "A profecia de Jeremias"], correct: 1, rationale: "A queda de Jerusalém e a destruição do Templo pelas forças babilônicas em 586 a.C. marcam o início do exílio babilônico para Judá." },
+                { question: "O que Jesus fez na casa de Zaqueu que marcou a vida dele?", answers: ["Curou-o", "Expulsa demônios", "Comeu com ele e ofereceu salvação", "Contou uma parábola"], correct: 2, rationale: "Jesus visitou a casa de Zaqueu, um coletor de impostos rico, e sua presença trouxe salvação e uma mudança radical na vida de Zaqueu." },
                 // Bloco 3
-                { question: "A 'passagem do Mar Vermelho' foi um milagre durante qual evento?", answers: ["A conquista de Canaã", "O Êxodo do Egito", "A peregrinação a Jerusalém", "A fuga de Davi"], correct: 1 },
-                { question: "Qual o evento em que Jesus acalmou uma tempestade?", answers: ["Enquanto caminhava para Emaús", "No Mar da Galileia com os discípulos", "Durante o Sermão da Montanha", "Na festa das cabanas"], correct: 1 },
-                { question: "A 'escrita na parede' ocorreu durante um banquete de qual rei?", answers: ["Nabucodonosor", "Dario", "Belsazar", "Ciro"], correct: 2 },
-                { question: "Qual evento levou à criação das doze tribos de Israel?", answers: ["O nascimento dos filhos de Jacó", "A aliança com Abraão", "A divisão da terra de Canaã", "A saída do Egito"], correct: 0 },
-                { question: "A 'ressurreição de Lázaro' demonstrou o poder de Jesus sobre o quê?", answers: ["A natureza", "Os demônios", "A doença", "A morte"], correct: 3 },
-                { question: "Qual evento resultou na perda da força de Sansão?", answers: ["A luta com um leão", "A quebra de seu voto nazireu ao ter o cabelo cortado", "A traição de seus pais", "A destruição do templo de Dagom"], correct: 1 },
-                { question: "O Sermão da Montanha contém qual famosa coleção de ensinamentos?", answers: ["As Parábolas", "Os Dez Mandamentos", "As Bem-Aventuranças", "As Profecias"], correct: 2 },
-                { question: "A 'destruição do primeiro templo' foi realizada por qual império?", answers: ["Egípcio", "Assírio", "Babilônico", "Persa"], correct: 2 },
-                { question: "Em qual evento o véu do templo se rasgou em dois?", answers: ["No nascimento de Jesus", "No batismo de Jesus", "Na crucificação de Jesus", "No dia de Pentecostes"], correct: 2 },
-                { question: "A 'Conversão de Saulo' aconteceu a caminho de qual cidade?", answers: ["Jerusalém", "Antioquia", "Roma", "Damasco"], correct: 3 }
+                { question: "A 'passagem do Mar Vermelho' foi um milagre durante qual evento?", answers: ["A conquista de Canaã", "O Êxodo do Egito", "A peregrinação a Jerusalém", "A fuga de Davi"], correct: 1, rationale: "A passagem do Mar Vermelho foi um milagre central durante o Êxodo, onde Deus abriu o mar para os israelitas passarem em terra seca e fechou-o sobre os egípcios." },
+                { question: "Qual o evento em que Jesus acalmou uma tempestade?", answers: ["Enquanto caminhava para Emaús", "No Mar da Galileia com os discípulos", "Durante o Sermão da Montanha", "Na festa das cabanas"], correct: 1, rationale: "Jesus acalmou uma tempestade repentina no Mar da Galileia, demonstrando seu poder sobre a natureza e sua divindade." },
+                { question: "A 'escrita na parede' ocorreu durante um banquete de qual rei?", answers: ["Nabucodonosor", "Dario", "Belsazar", "Ciro"], correct: 2, rationale: "A misteriosa escrita na parede apareceu durante um banquete do rei Belsazar, interpretada por Daniel como um juízo divino sobre o reino." },
+                { question: "Qual evento levou à criação das doze tribos de Israel?", answers: ["O nascimento dos filhos de Jacó", "A aliança com Abraão", "A divisão da terra de Canaã", "A saída do Egito"], correct: 0, rationale: "As doze tribos de Israel surgiram dos doze filhos de Jacó (também chamado Israel), que se tornaram os patriarcas das tribos." },
+                { question: "A 'ressurreição de Lázaro' demonstrou o poder de Jesus sobre o quê?", answers: ["A natureza", "Os demônios", "A doença", "A morte"], correct: 3, rationale: "A ressurreição de Lázaro dos mortos demonstrou o poder absoluto de Jesus sobre a morte e sua capacidade de dar vida." },
+                { question: "Qual evento resultou na perda da força de Sansão?", answers: ["A luta com um leão", "A quebra de seu voto nazireu ao ter o cabelo cortado", "A traição de seus pais", "A destruição do templo de Dagom"], correct: 1, rationale: "Sansão perdeu sua força quando seu cabelo, símbolo de seu voto nazireu, foi cortado por Dalila, violando seu pacto com Deus." },
+                { question: "O Sermão da Montanha contém qual famosa coleção de ensinamentos?", answers: ["As Parábolas", "Os Dez Mandamentos", "As Bem-Aventuranças", "As Profecias"], correct: 2, rationale: "O Sermão da Montanha, ensinado por Jesus, inicia com as Bem-Aventuranças, que descrevem as características e bênçãos dos verdadeiros discípulos." },
+                { question: "A 'destruição do primeiro templo' foi realizada por qual império?", answers: ["Egípcio", "Assírio", "Babilônico", "Persa"], correct: 2, rationale: "O primeiro Templo de Jerusalém foi destruído pelo Império Babilônico sob o comando de Nabucodonosor, levando ao exílio judaico." },
+                { question: "Em qual evento o véu do templo se rasgou em dois?", answers: ["No nascimento de Jesus", "No batismo de Jesus", "Na crucificação de Jesus", "No dia de Pentecostes"], correct: 2, rationale: "No momento da crucificação de Jesus, o véu do templo se rasgou de alto a baixo, simbolizando que o caminho para Deus estava agora aberto a todos." },
+                { question: "A 'Conversão de Saulo' aconteceu a caminho de qual cidade?", answers: ["Jerusalém", "Antioquia", "Roma", "Damasco"], correct: 3, rationale: "A dramática conversão de Saulo (que se tornou Paulo) ocorreu a caminho de Damasco, onde ele teve um encontro com Jesus ressuscitado." }
             ],
         };
 
         // --- ESTADO DO JOGO E LÓGICA ---
         let currentTopic = '';
         let currentQuestionIndex = 0;
-        let score = 0;
-        // Objeto para armazenar o progresso em cada tópico, carregado do localStorage
-        let progress = { geografia: 0, pessoas: 0, eventos: 0 };
-        const questionsPerBlock = 10;
+        let currentBlockScore = 0; // Pontuação do bloco atual
+        let blockTimings = []; // Armazena o tempo gasto em cada questão do bloco atual
+        let currentUsername = 'Jogador'; // Nome de usuário padrão
+        let rationaleAdvanceTimeoutId; // ID do setTimeout para o avanço do racional
+        const ACCURACY_THRESHOLD = 50; // Limiar de precisão para considerar o tempo (50%)
+
+
+        // Objeto para armazenar o progresso em cada tópico
+        // Agora inclui totalScore e totalTimeTaken para cálculos gerais
+        let progress = {
+            geografia: { completedQuestions: 0, totalScore: 0, totalTimeTaken: 0, isCompleted: false },
+            pessoas: { completedQuestions: 0, totalScore: 0, totalTimeTaken: 0, isCompleted: false },
+            eventos: { completedQuestions: 0, totalScore: 0, totalTimeTaken: 0, isCompleted: false }
+        };
+        const questionsPerBlock = 10; // Número de perguntas por bloco
+        const totalQuestionsPerTopic = 30; // Total de perguntas por tópico
+
         // Índice para alternar entre as músicas de fundo
         let currentBackgroundMusicIndex = 0; 
+        let timerInterval; // Variável para armazenar o ID do setTimeout principal do timer
+        let timerColorChangeInterval; // Nova variável para o intervalo de mudança de cor
+        const timerDuration = 15; // Duração do timer em segundos (aumentado para 15)
+        let startTimeQuestion; // Tempo de início de cada pergunta
 
         // Elementos da interface (cache de referências DOM para performance)
         const initialLoadScreen = document.getElementById('initial-load-screen');
+        const usernameInput = document.getElementById('username-input'); // Novo input de username
         const startAppButton = document.getElementById('start-app-button');
         const homeScreen = document.getElementById('home-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const resultsScreen = document.getElementById('results-screen');
         const victoryScreen = document.getElementById('victory-screen');
         const bgMusic = document.getElementById('bg-music');
+        const victoryMusic = document.getElementById('victory-music'); 
+        const timeBar = document.getElementById('time-bar');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const rationaleText = document.getElementById('rationale-text');
+        const timePercentageText = document.getElementById('time-percentage-text');
+        const starRatingContainer = document.getElementById('star-rating'); // Estrelas da tela de resultados do bloco
+        const victoryStarRatingContainer = document.getElementById('victory-star-rating'); // Estrelas da tela de vitória
+        const cylinderFill = document.getElementById('cylinder-fill');
+        const cylinderPercentageText = document.getElementById('cylinder-percentage-text');
+        const blockFeedbackMessage = document.getElementById('block-feedback-message');
+        const overallScoreText = document.getElementById('overall-score-text');
+        // A referência para skipToVictoryButton foi removida daqui, pois o botão será removido
+        const backToMenuVictoryButton = document.getElementById('back-to-menu-victory');
+        const nextTopicButton = document.getElementById('next-topic-button'); // Novo botão Próximo Tópico
+
+        const quizContainer = document.getElementById('quiz-container'); // Referência para o container do quiz
+        const questionTextElement = document.getElementById('question-text');
+        const answerOptionsElement = document.getElementById('answer-options');
+        const timeBarContainer = document.getElementById('time-bar-container');
+
+        const victoryCylinderContainer = document.getElementById('victory-cylinder-container');
+        const victoryCylinderFill = document.getElementById('victory-cylinder-fill');
+        const victoryCylinderPercentageText = document.getElementById('victory-cylinder-percentage-text');
+        const leaderboardList = document.getElementById('leaderboard-list');
+
 
         // --- CONFIGURAÇÃO DE RECURSOS ---
         // Base URL para os recursos hospedados no GitHub Pages
@@ -272,21 +447,65 @@
             `${GITHUB_PAGES_BASE_URL}amor.mp3`
         ];
 
+        // URL da música de vitória
+        const victoryMusicUrl = `${GITHUB_PAGES_BASE_URL}Oceanostelafinal.mp3`; 
+
         // URLs das imagens de fundo para as perguntas (seleção aleatória)
         const quizBackgroundImages = [
-            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(2).png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(3).png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(4).png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(5).png`
+            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%C3%A7.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/Design.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_225457748-stock-illustration-biblical-vector-illustration-series-jesus.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_234810260-stock-illustration-biblical-vector-illustration-series-way.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_256938046-stock-illustration-jesus-heals-the-blind-man-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_256938844-stock-illustration-jesus-comes-to-jerusalem-as-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_354432542-stock-illustration-biblical-vector-illustration-series-jesus.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_393585142-stock-illustration-biblical-vector-illustration-jesus-talking-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_666141214-stock-illustration-biblical-figure-illustration-series-moses-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_711506406-stock-illustration-biblical-vector-illustration-series-biblical-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_711506444-stock-illustration-biblical-storytelling-inspired-samuel-moment-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_711506468-stock-illustration-biblical-vector-illustration-series-jesus-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_711506558-stock-illustration-biblicall-vector-illustration-series-woman-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_715837834-stock-illustration-biblical-silhouette-illustration-series-jesus-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_716584466-stock-illustration-biblical-vector-illustration-series-paul-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_716600938-stock-illustration-peter-filled-holy-spirit-acts-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_743336174-stock-illustration-biblical-vector-illustration-series-parable-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_743336248-stock-illustration-biblical-vector-illustration-series-moses-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_743336278-stock-illustration-jesus-prayer-amongst-ancient-olive-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_749091306-stock-illustration-hand-god-protects-blesses-christian-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_749091328-stock-illustration-shining-silhouette-jesus-standing-hill-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_787653916-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701130-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701142-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701154-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701180-stock-illustration-pontius-pilate-washing-his-hands-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701210-stock-illustration-biblical-vector-illustration-way-cross-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701224-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803702008-stock-illustration-green-economy-concept-scale-businessman-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803702036-stock-illustration-two-hands-raised-prayer-supplication-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199042-stock-illustration-simple-minimalist-biblical-vector-illustration-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199054-stock-illustration-minimalist-biblical-vector-illustration-red-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199062-stock-illustration-biblical-vector-illustration-series-red-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199130-stock-illustration-simple-minimalist-biblical-vector-illustration-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199310-stock-illustration-peter-filled-holy-spirit-acts-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/freepik__enhance__71882.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/freepik__enhance__71883.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/upscalemedia-transformed%20(1).jpeg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/upscalemedia-transformed.jpeg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/vida.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/videirae.png`
         ];
+
+        // Imagens específicas para a tela de vitória por tópico
+        const victoryTopicBackgroundImages = {
+            geografia: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_225457748-stock-illustration-biblical-vector-illustration-series-jesus.png`,
+            pessoas: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_354432542-stock-illustration-biblical-vector-illustration-series-jesus-Picsart-AiImageEnhancer.jpg`,
+            eventos: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_666141214-stock-illustration-biblical-figure-illustration-series-moses-Picsart-AiImageEnhancer.jpg`
+        };
 
         // Sons para feedback (acerto, erro, bloco completo, vitória)
         const correctSound = new Audio(`${GITHUB_PAGES_BASE_URL}pointsg.mp3`);
-        const incorrectSound = new Audio(`${GITHUB_PAGES_BASE_URL}perdeu.mp3`);
-        // Sons genéricos mantidos do mixkit, considere substituí-los por seus próprios arquivos se desejar
+        const incorrectSound = new Audio(`${GITHUB_PAGES_BASE_URL}negative.mp3`); 
         const blockCompleteSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-video-game-cheers-2060.mp3'); 
-        const victorySound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-game-success-alert-2009.mp3'); 
 
         // --- FUNÇÕES DE UTILIDADE ---
 
@@ -302,14 +521,137 @@
         }
 
         /**
+         * Inicia o contador de tempo para a pergunta.
+         */
+        function startTimer() {
+            startTimeQuestion = Date.now(); // Armazena o tempo de início da pergunta
+            let endTime = startTimeQuestion + (timerDuration * 1000);
+
+            timeBar.style.width = '100%';
+            timeBar.style.backgroundColor = '#34D399'; // Começa verde
+            timeBar.style.transition = 'none'; // Desativa a transição CSS para controle JavaScript
+
+            // Limpa qualquer timer existente
+            stopTimer();
+
+            // Define um timeout para chamar handleTimeout após a duração total
+            timerInterval = setTimeout(() => {
+                handleTimeout();
+            }, timerDuration * 1000);
+
+            // Define um intervalo para atualizar a largura da barra e a cor
+            timerColorChangeInterval = setInterval(() => {
+                let now = Date.now();
+                let remainingTimeMs = endTime - now;
+
+                if (remainingTimeMs <= 0) {
+                    clearInterval(timerColorChangeInterval); // Para este intervalo
+                    return;
+                }
+
+                let percentage = (remainingTimeMs / (timerDuration * 1000)) * 100;
+                timeBar.style.width = `${percentage}%`;
+
+                // Muda a cor para vermelho quando faltarem 5 segundos ou menos
+                if (remainingTimeMs <= 5000 && timeBar.style.backgroundColor !== 'red') { 
+                    timeBar.style.backgroundColor = 'red';
+                }
+            }, 100); // Atualiza a cada 100 milissegundos para suavidade
+        }
+
+        /**
+         * Para o contador de tempo.
+         */
+        function stopTimer() {
+            clearTimeout(timerInterval);
+            clearInterval(timerColorChangeInterval); // Limpa o intervalo de mudança de cor também
+            timeBar.style.width = '0%'; // Reseta a barra instantaneamente
+            timeBar.style.transition = 'none'; // Garante que não haja transição pendente
+        }
+
+        /**
+         * Lida com o evento de tempo esgotado.
+         */
+        function handleTimeout() {
+            stopTimer(); // Garante que o timer seja parado
+            const timeTaken = timerDuration * 1000; // Tempo total esgotado (15 segundos)
+            blockTimings.push(timeTaken); // Adiciona o tempo à lista do bloco
+
+            feedbackMessage.textContent = "Tempo esgotado! Nenhuma opção foi escolhida.";
+            feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-red-300";
+            
+            // Desabilita os botões para evitar cliques tardios
+            const answerButtons = answerOptionsElement.children; 
+            for (let i = 0; i < answerButtons.length; i++) {
+                answerButtons[i].disabled = true;
+            }
+
+            // Mostra a resposta correta e a justificativa
+            const questionData = quizData[currentTopic][currentQuestionIndex];
+            if (questionData && questionData.correct !== undefined) {
+                // Destaca a resposta correta
+                if (answerButtons[questionData.correct]) {
+                    answerButtons[questionData.correct].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg';
+                }
+            }
+            
+            // Oculta elementos da pergunta e mostra racional
+            questionTextElement.classList.add('hidden');
+            answerOptionsElement.classList.add('hidden');
+            timeBarContainer.classList.add('hidden');
+            feedbackMessage.classList.remove('hidden'); // Garante que o feedback seja visível
+            rationaleText.classList.remove('hidden'); // Garante que o racional seja visível
+            displayRationale(questionData.rationale); // Exibe o racional
+
+            // Armazena o ID do timeout para permitir pular
+            rationaleAdvanceTimeoutId = setTimeout(() => {
+                advanceQuizAfterRationale();
+            }, 5000); // Racional visível por 5 segundos antes de avançar
+        }
+
+        /**
+         * Avança o quiz após a exibição do racional (chamado por timeout ou clique/toque).
+         */
+        function advanceQuizAfterRationale() {
+            clearTimeout(rationaleAdvanceTimeoutId); // Garante que o timeout seja limpo
+            rationaleAdvanceTimeoutId = null; // Reseta a variável
+
+            currentQuestionIndex++;
+            // Lógica para avançar ou mostrar resultados
+            if (currentQuestionIndex % questionsPerBlock === 0 || currentQuestionIndex >= quizData[currentTopic].length) {
+                // Atualiza o progresso do tópico com os dados do bloco atual
+                progress[currentTopic].completedQuestions = currentQuestionIndex;
+                progress[currentTopic].totalScore += currentBlockScore; // Adiciona a pontuação do bloco ao total
+                const currentBlockTimeTakenMs = blockTimings.reduce((sum, time) => sum + time, 0);
+                progress[currentTopic].totalTimeTaken += currentBlockTimeTakenMs; // Adiciona o tempo do bloco ao total
+                
+                if (currentQuestionIndex >= totalQuestionsPerTopic) { 
+                    progress[currentTopic].isCompleted = true; // Marca o tópico como completo
+                    saveProgress(); // Salva o progresso
+                    showVictoryScreen();
+                } else {
+                    saveProgress(); // Salva o progresso
+                    blockCompleteSound.play().catch(e => console.log("Erro ao tocar som de bloco completo: ", e)); 
+                    showResults();
+                }
+            } else {
+                displayQuestion();
+            }
+        }
+
+        /**
          * Exibe uma tela específica do aplicativo e gerencia a música de fundo.
          * @param {string} screenId - O ID do elemento da tela a ser exibida.
          */
         function showScreen(screenId) {
-            // Pausa a música de fundo se estiver saindo da tela inicial para evitar sobreposição de áudios
-            if (screenId !== 'home-screen' && bgMusic && !bgMusic.paused) {
+            // Pausa todas as músicas ao trocar de tela
+            if (bgMusic && !bgMusic.paused) {
                 bgMusic.pause();
-                bgMusic.currentTime = 0; // Reinicia a música para a próxima vez que for tocada
+                bgMusic.currentTime = 0;
+            }
+            if (victoryMusic && !victoryMusic.paused) {
+                victoryMusic.pause();
+                victoryMusic.currentTime = 0;
             }
 
             // Oculta todas as telas
@@ -332,7 +674,8 @@
                 if (bgMusic && bgMusic.paused) { 
                     bgMusic.play().catch(e => console.log("Erro ao tentar tocar a música de fundo: ", e));
                 }
-            }
+            } 
+            // A música da vitória é tocada na função showVictoryScreen
         }
 
         /**
@@ -341,7 +684,18 @@
         function loadProgress() {
             const savedProgress = localStorage.getItem('quizBiblicoProgress');
             if (savedProgress) {
-                progress = JSON.parse(savedProgress);
+                const parsedProgress = JSON.parse(savedProgress);
+                // Mescla o progresso salvo com a estrutura padrão, garantindo que novas propriedades sejam inicializadas
+                for (const topic in progress) {
+                    if (parsedProgress[topic]) {
+                        progress[topic] = { ...progress[topic], ...parsedProgress[topic] };
+                    }
+                }
+            }
+            const savedUsername = localStorage.getItem('quizBiblicoUsername');
+            if (savedUsername) {
+                currentUsername = savedUsername;
+                usernameInput.value = currentUsername;
             }
         }
         
@@ -350,6 +704,7 @@
          */
         function saveProgress() {
             localStorage.setItem('quizBiblicoProgress', JSON.stringify(progress));
+            localStorage.setItem('quizBiblicoUsername', currentUsername);
         }
 
         /**
@@ -359,7 +714,7 @@
             for (const topic in progress) {
                 const progressElement = document.getElementById(`progress-${topic}`);
                 if(progressElement) {
-                    progressElement.textContent = `${progress[topic] || 0}/30`;
+                    progressElement.textContent = `${progress[topic].completedQuestions || 0}/${totalQuestionsPerTopic}`;
                 }
             }
         }
@@ -367,14 +722,32 @@
         /**
          * Inicia o quiz para um tópico específico.
          * @param {string} topic - O tópico do quiz a ser iniciado ('geografia', 'pessoas', 'eventos').
+         * @param {boolean} restartBlock - Se true, reinicia o bloco atual.
          */
-        function startQuiz(topic) {
+        function startQuiz(topic, restartBlock = false) {
             currentTopic = topic;
-            currentQuestionIndex = progress[topic] || 0;
-            score = 0;
+            currentBlockScore = 0; // Sempre zera a pontuação do bloco ao iniciar um novo bloco ou reiniciar
+            blockTimings = []; // Sempre zera os tempos do bloco
+
+            if (restartBlock) {
+                // Calcula o índice inicial do bloco atual
+                currentQuestionIndex = Math.floor(currentQuestionIndex / questionsPerBlock) * questionsPerBlock;
+            } else {
+                currentQuestionIndex = progress[topic].completedQuestions || 0;
+            }
             
+            // Importante: A pontuação total para a tela de vitória será calculada somando os 'totalScore' de cada tópico no objeto 'progress'.
+            // Para garantir que a pontuação acumulada para a tela de vitória seja precisa,
+            // vamos zerar 'totalScore' e 'totalTimeTaken' de um tópico apenas quando ele for iniciado do '0'
+            // (ou seja, quando `currentQuestionIndex` for 0).
+            if (currentQuestionIndex === 0 && !restartBlock) {
+                progress[currentTopic].totalScore = 0;
+                progress[currentTopic].totalTimeTaken = 0;
+            }
+
+
             // Verifica se o tópico já foi concluído
-            if (currentQuestionIndex >= 30) {
+            if (!restartBlock && currentQuestionIndex >= totalQuestionsPerTopic) {
                 const feedbackMessage = document.getElementById('feedback-message-home');
                 if (feedbackMessage) {
                     feedbackMessage.textContent = "Você já completou este tópico!";
@@ -384,23 +757,17 @@
                 return;
             }
 
-            // Seleciona e aplica uma imagem de fundo aleatória para as telas do quiz
-            const randomImage = quizBackgroundImages[Math.floor(Math.random() * quizBackgroundImages.length)];
-            quizScreen.style.backgroundImage = `url('${randomImage}')`;
-            quizScreen.style.backgroundSize = 'cover';
-            quizScreen.style.backgroundPosition = 'center';
+            // A imagem de fundo será definida em displayQuestion() para que mude a cada pergunta
+            displayQuestion(); 
+            showScreen('quiz-screen'); 
+        }
 
-            // Aplica a mesma imagem de fundo para as telas de resultados e vitória para consistência
-            resultsScreen.style.backgroundImage = `url('${randomImage}')`;
-            resultsScreen.style.backgroundSize = 'cover';
-            resultsScreen.style.backgroundPosition = 'center';
-
-            victoryScreen.style.backgroundImage = `url('${randomImage}')`;
-            victoryScreen.style.backgroundSize = 'cover';
-            victoryScreen.style.backgroundPosition = 'center';
-
-            displayQuestion(); // Exibe a primeira pergunta
-            showScreen('quiz-screen'); // Mostra a tela do quiz
+        /**
+         * Exibe o texto explicativo (racional) da resposta.
+         * @param {string} rationale - O texto explicativo a ser exibido.
+         */
+        function displayRationale(rationale) {
+            rationaleText.textContent = rationale || '';
         }
 
         /**
@@ -408,25 +775,46 @@
          */
         function displayQuestion() {
             const questionData = quizData[currentTopic][currentQuestionIndex];
-            const questionText = document.getElementById('question-text');
-            const answerOptions = document.getElementById('answer-options');
             
-            // Atualiza o texto de progresso da pergunta
-            document.getElementById('progress-text').textContent = `Pergunta ${ (currentQuestionIndex % questionsPerBlock) + 1 } de ${questionsPerBlock}`;
-            questionText.textContent = questionData.question;
-            answerOptions.innerHTML = ''; // Limpa as opções anteriores
-            
-            document.getElementById('feedback-message').innerHTML = ''; // Limpa a mensagem de feedback
+            // Limpa estados anteriores
+            feedbackMessage.innerHTML = ''; 
+            rationaleText.innerHTML = ''; 
+            answerOptionsElement.innerHTML = ''; 
 
-            // Cria e adiciona os botões de resposta
+            stopTimer(); // Para qualquer timer anterior
+
+            // Define imagem de fundo aleatória para as telas do quiz
+            const randomImage = quizBackgroundImages[Math.floor(Math.random() * quizBackgroundImages.length)];
+            quizScreen.style.backgroundImage = `url('${randomImage}')`;
+            quizScreen.style.backgroundSize = 'cover';
+            quizScreen.style.backgroundPosition = 'center';
+            resultsScreen.style.backgroundImage = `url('${randomImage}')`; // Aplica também para tela de resultados e vitória
+            resultsScreen.style.backgroundSize = 'cover';
+            resultsScreen.style.backgroundPosition = 'center';
+            
+            // A imagem de vitória agora será definida em showVictoryScreen
+            victoryScreen.style.background = 'none'; // Limpa qualquer imagem anterior para evitar flash de conteúdo
+
+            // Mostra pergunta, respostas e barra de tempo imediatamente
+            questionTextElement.classList.remove('hidden');
+            answerOptionsElement.classList.remove('hidden');
+            timeBarContainer.classList.remove('hidden');
+            feedbackMessage.classList.add('hidden'); // Garante que o feedback esteja oculto no início de uma nova pergunta
+            rationaleText.classList.add('hidden'); // Garante que o racional esteja oculto no início de uma nova pergunta
+
+            document.getElementById('progress-text').textContent = `Pergunta ${ (currentQuestionIndex % questionsPerBlock) + 1 } de ${questionsPerBlock}`;
+            questionTextElement.textContent = questionData.question;
+            
             questionData.answers.forEach((answer, index) => {
                 const button = document.createElement('button');
                 button.textContent = answer;
-                button.className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all text-base sm:text-lg';
-                button.dataset.answerIndex = index; // Armazena o índice da resposta no dataset do botão
-                button.onclick = () => handleAnswer(index); // Define o manipulador de clique
-                answerOptions.appendChild(button);
+                button.className = 'w-full text-left p-3 sm:p-4 rounded-lg glassmorphism hover:bg-white/10 transition-all text-base sm:text-lg';
+                button.dataset.answerIndex = index;
+                button.onclick = () => handleAnswer(index);
+                answerOptionsElement.appendChild(button);
             });
+
+            startTimer(); // Inicia o timer para a pergunta
         }
         
         /**
@@ -434,11 +822,13 @@
          * @param {number} selectedIndex - O índice da opção de resposta selecionada pelo usuário.
          */
         function handleAnswer(selectedIndex) {
+            stopTimer(); // Para o timer imediatamente ao responder
+            const timeTaken = Date.now() - startTimeQuestion; // Calcula o tempo gasto
+            blockTimings.push(timeTaken); // Adiciona o tempo à lista do bloco
+
             const questionData = quizData[currentTopic][currentQuestionIndex];
             const isCorrect = selectedIndex === questionData.correct;
-            const feedbackMessage = document.getElementById('feedback-message');
-            const answerOptionsDiv = document.getElementById('answer-options'); 
-            const answerButtons = answerOptionsDiv.children; 
+            const answerButtons = answerOptionsElement.children; 
 
             // Desabilita todos os botões para evitar cliques múltiplos
             for (let i = 0; i < answerButtons.length; i++) {
@@ -447,56 +837,151 @@
 
             // Aplica estilos visuais e toca sons com base na correção da resposta
             if (isCorrect) {
-                score++;
+                currentBlockScore++; // Incrementa a pontuação do bloco atual
                 correctSound.play().catch(e => console.log("Erro ao tocar som de acerto: ", e));
                 answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg';
                 feedbackMessage.textContent = "Resposta Correta!";
                 feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-green-300";
             } else {
                 incorrectSound.play().catch(e => console.log("Erro ao tocar som de erro: ", e));
-                answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-red-500 transition-all text-base sm:text-lg';
-                answerButtons[questionData.correct].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg'; // Destaca a resposta correta
-                feedbackMessage.textContent = "Resposta Incorreta!";
-                feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-red-300";
+                // Apenas se houver um selectedIndex válido (não -1 de timeout)
+                if (selectedIndex !== -1 && answerButtons[selectedIndex]) {
+                    answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-red-500 transition-all text-base sm:text-lg';
+                }
+                // Sempre destaca a resposta correta, mesmo se o usuário errou ou o tempo esgotou
+                if (answerButtons[questionData.correct]) {
+                    answerButtons[questionData.correct].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg'; 
+                }
+                // Mensagem de feedback já configurada em handleTimeout para esse caso
+                if (selectedIndex !== -1) { // Só mostra 'Incorreta' se o usuário clicou
+                    feedbackMessage.textContent = "Resposta Incorreta!";
+                    feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-red-300";
+                }
             }
             
-            // Avança para a próxima pergunta ou tela de resultados após um pequeno atraso
-            setTimeout(() => {
-                currentQuestionIndex++;
-                // Verifica se o bloco de 10 perguntas terminou ou se todas as perguntas do tópico foram respondidas
-                if (currentQuestionIndex % questionsPerBlock === 0 || currentQuestionIndex >= quizData[currentTopic].length) {
-                    if (currentQuestionIndex >= 30) { 
-                        showVictoryScreen(); // Exibe a tela de vitória se todas as 30 perguntas do tópico foram respondidas
-                    } else {
-                        blockCompleteSound.play().catch(e => console.log("Erro ao tocar som de bloco completo: ", e)); 
-                        showResults(); // Exibe a tela de resultados do bloco
-                    }
-                } else {
-                    displayQuestion(); // Exibe a próxima pergunta
-                }
-            }, 2000); // 2 segundos de atraso
+            // Oculta elementos da pergunta e mostra racional
+            questionTextElement.classList.add('hidden');
+            answerOptionsElement.classList.add('hidden');
+            timeBarContainer.classList.add('hidden');
+            feedbackMessage.classList.remove('hidden'); // Garante que o feedback seja visível
+            rationaleText.classList.remove('hidden'); // Garante que o racional seja visível
+            displayRationale(questionData.rationale); // Exibe o racional para todas as situações
+            
+            // Armazena o ID do timeout para permitir pular
+            rationaleAdvanceTimeoutId = setTimeout(() => {
+                advanceQuizAfterRationale();
+            }, 5000); // Racional visível por 5 segundos antes de avançar
         }
 
         /**
          * Exibe a tela de resultados após a conclusão de um bloco de perguntas.
          */
         function showResults() {
-            progress[currentTopic] = currentQuestionIndex; // Atualiza o progresso do tópico
-            saveProgress(); // Salva o progresso no localStorage
-            
-            document.getElementById('results-text').textContent = `Você acertou ${score} de ${questionsPerBlock} perguntas.` ;
+            document.getElementById('results-text').textContent = `Você acertou ${currentBlockScore} de ${questionsPerBlock} perguntas.` ;
+
+            // Cálculo da porcentagem de acertos para o BLOCO ATUAL
+            const correctAnswersPercentageBlock = (currentBlockScore / questionsPerBlock) * 100;
+
+            // Cálculo da porcentagem de tempo para o BLOCO ATUAL
+            const totalTimeTakenBlockMs = blockTimings.reduce((sum, time) => sum + time, 0);
+            const totalAvailableTimeBlockMs = questionsPerBlock * timerDuration * 1000;
+            let timeEfficiencyPercentageBlock = ((totalAvailableTimeBlockMs - totalTimeTakenBlockMs) / totalAvailableTimeBlockMs) * 100;
+            timeEfficiencyPercentageBlock = Math.max(0, Math.round(timeEfficiencyPercentageBlock)); // Garante que não seja negativo e arredonda
+
+            timePercentageText.textContent = `Tempo: ${timeEfficiencyPercentageBlock}%`;
+
+            let combinedScorePercentageBlock;
+            // Se a precisão for menor que o limiar, o tempo não conta para a pontuação combinada
+            if (correctAnswersPercentageBlock < ACCURACY_THRESHOLD) {
+                combinedScorePercentageBlock = correctAnswersPercentageBlock; // Tempo não é considerado
+                blockFeedbackMessage.textContent = "Sua precisão foi um pouco baixa neste bloco. Foco na resposta correta antes da velocidade!";
+                blockFeedbackMessage.classList.remove('text-green-400'); // Garante que a classe verde seja removida
+                blockFeedbackMessage.classList.add('text-red-400');
+            } else {
+                combinedScorePercentageBlock = (correctAnswersPercentageBlock + timeEfficiencyPercentageBlock) / 2;
+                blockFeedbackMessage.textContent = "Excelente! Você está no caminho certo. Vamos para o próximo bloco!";
+                blockFeedbackMessage.classList.remove('text-red-400'); // Garante que a classe vermelha seja removida
+                blockFeedbackMessage.classList.add('text-green-400');
+            }
+
+            // Determinar o número de estrelas preenchidas para o BLOCO ATUAL
+            let filledStarsBlock = 0;
+            if (combinedScorePercentageBlock >= 80) {
+                filledStarsBlock = 5;
+            } else if (combinedScorePercentageBlock >= 60) {
+                filledStarsBlock = 4;
+            } else if (combinedScorePercentageBlock >= 40) {
+                filledStarsBlock = 3;
+            } else if (combinedScorePercentageBlock >= 20) {
+                filledStarsBlock = 2;
+            } else {
+                filledStarsBlock = 1;
+            }
+
+            // Renderização das estrelas para o BLOCO ATUAL
+            starRatingContainer.innerHTML = ''; // Limpa estrelas anteriores
+            // A cor das estrelas é baseada no combinedScorePercentageBlock
+            const starColorClassBlock = combinedScorePercentageBlock >= 60 ? 'text-amber-400' : 'text-red-500'; // Dourado se >=60%, vermelho caso contrário
+
+            for (let i = 0; i < 5; i++) {
+                const starWrapper = document.createElement('span');
+                starWrapper.classList.add('star-item'); // Adiciona a classe de estilo de vidro
+                
+                const star = document.createElement('span');
+                star.textContent = '★'; // Unicode para estrela preenchida
+                
+                // Estrela do meio maior
+                if (i === 2) { // Índice 2 é a terceira estrela (do meio)
+                    starWrapper.classList.add('middle-star');
+                }
+
+                // Se a estrela atual deve ser preenchida, aplica a cor. Caso contrário, deixa cinza.
+                if (i < filledStarsBlock) {
+                    star.classList.add(starColorClassBlock);
+                } else {
+                    star.classList.add('text-gray-500'); // Estrela não preenchida
+                }
+                starWrapper.appendChild(star);
+                starRatingContainer.appendChild(starWrapper);
+            }
+
+            // Atualiza o cilindro de porcentagem para o BLOCO ATUAL
+            cylinderFill.style.width = `${timeEfficiencyPercentageBlock}%`;
+            cylinderFill.style.backgroundColor = combinedScorePercentageBlock >= 60 ? '#FBBE24' : '#EF4444'; // Dourado ou vermelho
+            cylinderPercentageText.textContent = `${timeEfficiencyPercentageBlock}%`; // Exibe a porcentagem dentro do cilindro
             
             const buttonsContainer = document.getElementById('results-buttons');
             buttonsContainer.innerHTML = ''; // Limpa os botões anteriores
             
             // Adiciona o botão "Próximo Bloco" se houver mais perguntas no tópico
-            if(currentQuestionIndex < 30) {
+            if(currentQuestionIndex < totalQuestionsPerTopic) {
                 const continueButton = document.createElement('button');
                 continueButton.textContent = 'Próximo Bloco';
                 continueButton.className = 'bg-green-600 hover:bg-green-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
-                continueButton.onclick = () => startQuiz(currentTopic);
+                // Ao ir para o próximo bloco, zera a pontuação do bloco atual para o próximo ciclo
+                continueButton.onclick = () => { 
+                    currentBlockScore = 0; 
+                    blockTimings = []; // Reinicia os tempos para o novo bloco
+                    startQuiz(currentTopic); 
+                };
                 buttonsContainer.appendChild(continueButton);
             } 
+
+            // Botão para reiniciar o bloco atual
+            const restartButton = document.createElement('button');
+            restartButton.textContent = 'Reiniciar Bloco';
+            restartButton.className = 'bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
+            restartButton.onclick = () => {
+                // Desfaz a pontuação e tempo do bloco que acabou de ser jogado
+                progress[currentTopic].totalScore -= currentBlockScore;
+                const blockTimeUndo = blockTimings.reduce((sum, time) => sum + time, 0);
+                progress[currentTopic].totalTimeTaken -= blockTimeUndo;
+                currentBlockScore = 0; // Zera a pontuação do bloco para o novo jogo
+                blockTimings = []; // Zera os tempos para o novo jogo
+                saveProgress();
+                startQuiz(currentTopic, true); // Passa true para reiniciar o bloco
+            };
+            buttonsContainer.appendChild(restartButton);
 
             // Adiciona o botão "Voltar ao Menu"
             const homeButton = document.createElement('button');
@@ -509,12 +994,167 @@
         }
 
         /**
+         * Lógica para o ranking local
+         */
+        function getLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('quizBiblicoLeaderboard') || '[]');
+            return leaderboard.sort((a, b) => b.score - a.score); // Ordena do maior para o menor score
+        }
+
+        function saveLeaderboard(leaderboard) {
+            localStorage.setItem('quizBiblicoLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        function updateLeaderboard(username, overallScore) {
+            let leaderboard = getLeaderboard();
+            let userFound = false;
+
+            // Verifica se o usuário já existe e atualiza a pontuação se a nova for maior
+            for (let i = 0; i < leaderboard.length; i++) {
+                if (leaderboard[i].username === username) {
+                    if (overallScore > leaderboard[i].score) {
+                        leaderboard[i].score = overallScore;
+                    }
+                    userFound = true;
+                    break;
+                }
+            }
+
+            // Se o usuário não foi encontrado, adiciona um novo
+            if (!userFound) {
+                leaderboard.push({ username: username, score: overallScore });
+            }
+
+            saveLeaderboard(leaderboard);
+            displayLeaderboard();
+        }
+
+        function displayLeaderboard() {
+            const leaderboard = getLeaderboard();
+            leaderboardList.innerHTML = ''; // Limpa a lista existente
+
+            if (leaderboard.length === 0) {
+                leaderboardList.innerHTML = '<li class="text-sm text-slate-400">Nenhuma pontuação registrada ainda.</li>';
+                return;
+            }
+
+            leaderboard.slice(0, 5).forEach((entry, index) => { // Mostra os top 5
+                const listItem = document.createElement('li');
+                listItem.className = 'text-sm sm:text-base text-slate-300 py-1';
+                if (index === 0) {
+                    listItem.innerHTML = `<span class="text-amber-400">👑</span> ${entry.username}: ${Math.round(entry.score)}%`;
+                } else {
+                    listItem.textContent = `${entry.username}: ${Math.round(entry.score)}%`;
+                }
+                leaderboardList.appendChild(listItem);
+            });
+        }
+
+
+        /**
          * Exibe a tela de vitória final quando um tópico é totalmente concluído.
          */
         function showVictoryScreen() {
-            victorySound.play().catch(e => console.log("Erro ao tocar som de vitória: ", e)); 
-            // A imagem de fundo já é definida na função startQuiz e mantida para consistência
-            victoryScreen.className = `min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center`; 
+            // Define a imagem de fundo da tela de vitória com base no tópico atual
+            if (victoryTopicBackgroundImages[currentTopic]) {
+                victoryScreen.style.backgroundImage = `url('${victoryTopicBackgroundImages[currentTopic]}')`;
+                victoryScreen.style.backgroundSize = 'cover';
+                victoryScreen.style.backgroundPosition = 'center';
+            } else {
+                // Fallback para uma imagem genérica se não houver uma específica para o tópico
+                victoryScreen.style.backgroundImage = `url('${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(1).png')`;
+                victoryScreen.style.backgroundSize = 'cover';
+                victoryScreen.style.backgroundPosition = 'center';
+            }
+
+            // Calcula a pontuação e tempo totais para o tópico completo
+            const totalScoreTopic = progress[currentTopic].totalScore;
+            const totalTimeTakenTopicMs = progress[currentTopic].totalTimeTaken;
+            const totalPossibleQuestions = quizData[currentTopic].length; // Total de 30 perguntas
+
+            // Porcentagem de acertos geral
+            const overallCorrectAnswersPercentage = (totalScoreTopic / totalPossibleQuestions) * 100;
+
+            // Porcentagem de eficiência de tempo geral
+            const totalPossibleTimeMs = totalPossibleQuestions * timerDuration * 1000;
+            let overallTimeEfficiencyPercentage = ((totalPossibleTimeMs - totalTimeTakenTopicMs) / totalPossibleTimeMs) * 100;
+            overallTimeEfficiencyPercentage = Math.max(0, Math.round(overallTimeEfficiencyPercentage));
+
+            let overallCombinedScorePercentage;
+            // Se a precisão for menor que o limiar, o tempo não conta para a pontuação combinada
+            if (overallCorrectAnswersPercentage < ACCURACY_THRESHOLD) {
+                overallCombinedScorePercentage = overallCorrectAnswersPercentage; // Tempo não é considerado
+            } else {
+                overallCombinedScorePercentage = (overallCorrectAnswersPercentage + overallTimeEfficiencyPercentage) / 2;
+            }
+
+            // Determinar o número de estrelas preenchidas para a TELA DE VITÓRIA
+            let filledStarsVictory = 0;
+            if (overallCombinedScorePercentage >= 80) {
+                filledStarsVictory = 5;
+            } else if (overallCombinedScorePercentage >= 60) {
+                filledStarsVictory = 4;
+            } else if (overallCombinedScorePercentage >= 40) {
+                filledStarsVictory = 3;
+            } else if (overallCombinedScorePercentage >= 20) {
+                filledStarsVictory = 2;
+            } else {
+                filledStarsVictory = 1;
+            }
+
+            // Renderização das estrelas para a TELA DE VITÓRIA
+            victoryStarRatingContainer.innerHTML = ''; // Limpa estrelas anteriores
+            const starColorClassVictory = overallCombinedScorePercentage >= 60 ? 'text-amber-400' : 'text-red-500'; // Dourado ou vermelho
+
+            for (let i = 0; i < 5; i++) {
+                const starWrapper = document.createElement('span');
+                starWrapper.classList.add('star-item'); // Aplica o estilo de vidro
+                
+                const star = document.createElement('span');
+                star.textContent = '★'; // Unicode para estrela preenchida
+                
+                if (i === 2) { // Estrela do meio
+                    starWrapper.classList.add('middle-star');
+                }
+
+                if (i < filledStarsVictory) {
+                    star.classList.add(starColorClassVictory);
+                } else {
+                    star.classList.add('text-gray-500'); // Estrela não preenchida
+                }
+                starWrapper.appendChild(star);
+                victoryStarRatingContainer.appendChild(starWrapper);
+            }
+
+            overallScoreText.textContent = `Pontuação Total: ${totalScoreTopic}/${totalPossibleQuestions}`;
+
+            // Atualiza o cilindro de porcentagem na tela de vitória
+            victoryCylinderFill.style.width = `${overallTimeEfficiencyPercentage}%`;
+            victoryCylinderFill.style.backgroundColor = overallCombinedScorePercentage >= 60 ? '#FBBE24' : '#EF4444'; // Dourado ou vermelho
+            victoryCylinderPercentageText.textContent = `${overallTimeEfficiencyPercentage}%`;
+
+            // Atualiza o ranking com a pontuação do usuário
+            updateLeaderboard(currentUsername, overallCombinedScorePercentage);
+
+            victoryMusic.src = victoryMusicUrl; // Define a URL da música
+            victoryMusic.play().catch(e => console.log("Erro ao tocar música de vitória: ", e)); // Toca a música
+
+            // Verifica se há tópicos não concluídos para habilitar o botão "Próximo Tópico"
+            const allTopics = Object.keys(quizData);
+            const completedTopics = allTopics.filter(topic => progress[topic].isCompleted);
+            const uncompletedTopics = allTopics.filter(topic => !progress[topic].isCompleted);
+
+            if (uncompletedTopics.length > 0) {
+                nextTopicButton.classList.remove('hidden');
+                nextTopicButton.onclick = () => {
+                    const nextTopic = uncompletedTopics[0]; // Pega o primeiro tópico não concluído
+                    currentQuestionIndex = 0; // Reinicia o índice da pergunta para o novo tópico
+                    startQuiz(nextTopic);
+                };
+            } else {
+                nextTopicButton.classList.add('hidden'); // Esconde se todos os tópicos estiverem completos
+            }
+            
             showScreen('victory-screen');
         }
         
@@ -523,12 +1163,42 @@
             loadProgress(); // Carrega o progresso salvo
             // Pré-carrega as imagens do quiz para uma experiência mais suave
             preloadImages(quizBackgroundImages); 
+            // Pré-carrega as imagens de vitória de tópico também
+            Object.values(victoryTopicBackgroundImages).forEach(url => preloadImages([url]));
+
             initialLoadScreen.classList.remove('hidden'); // Exibe a tela de carregamento inicial
             homeScreen.classList.add('hidden'); // Garante que a tela inicial esteja oculta inicialmente
             
             // Adiciona o evento de clique ao botão "Iniciar Quiz" para transitar para a tela inicial
             startAppButton.addEventListener('click', () => {
+                const enteredUsername = usernameInput.value.trim();
+                if (enteredUsername) {
+                    currentUsername = enteredUsername;
+                } else {
+                    currentUsername = 'Jogador'; // Define um nome padrão se o campo estiver vazio
+                }
+                saveProgress(); // Salva o nome de usuário (se alterado)
                 showScreen('home-screen'); 
+            });
+
+            // O event listener para skipToVictoryButton foi removido
+
+            // Adiciona o event listener para o botão "Voltar ao Menu Principal" na tela de vitória
+            backToMenuVictoryButton.addEventListener('click', () => {
+                // Ao voltar para o menu, a música de vitória é pausada
+                if (victoryMusic && !victoryMusic.paused) {
+                    victoryMusic.pause();
+                    victoryMusic.currentTime = 0;
+                }
+                showScreen('home-screen');
+            });
+
+            // Adiciona o event listener para pular o racional
+            quizContainer.addEventListener('click', () => {
+                // Verifica se o racional está visível e se há um timeout ativo para ele
+                if (!rationaleText.classList.contains('hidden') && rationaleAdvanceTimeoutId) {
+                    advanceQuizAfterRationale();
+                }
             });
         };
     </script>
