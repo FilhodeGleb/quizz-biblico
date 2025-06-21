@@ -32,10 +32,9 @@
 <body class="bg-slate-900 text-white">
 
     <!-- Música de Fundo da Tela Inicial -->
-    <!-- Por favor, substitua 'URL_DA_SUA_MUSICA_DE_FUNDO.mp3' pelo caminho do seu arquivo de áudio. -->
-    <!-- Removido o 'autoplay' para resolver o erro "play() failed because the user didn't interact" -->
+    <!-- Fonte da música será definida via JavaScript para alternar -->
     <audio id="bg-music" loop>
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-level-music-610.mp3" type="audio/mpeg">
+        <!-- A source src será atualizada via JS -->
         Seu navegador não suporta o elemento de áudio.
     </audio>
 
@@ -247,6 +246,7 @@
         let score = 0;
         let progress = { geografia: 0, pessoas: 0, eventos: 0 };
         const questionsPerBlock = 10;
+        let currentMusicIndex = 0; // Para controlar qual música está tocando
 
         // Elementos da interface
         const initialLoadScreen = document.getElementById('initial-load-screen');
@@ -257,9 +257,15 @@
         const victoryScreen = document.getElementById('victory-screen');
         const bgMusic = document.getElementById('bg-music');
 
-        // Sons (Por favor, substitua os URLs pelos seus próprios arquivos de áudio)
-        const correctSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-in-a-game-2034.mp3');
-        const incorrectSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-bass-bubble-1718.mp3');
+        // URLs das músicas de fundo (agora duas para alternar)
+        const backgroundMusicUrls = [
+            "https://github.com/FilhodeGleb/quizz-biblico/raw/main/dnc.mp3",
+            "https://github.com/FilhodeGleb/quizz-biblico/raw/main/amor.mp3"
+        ];
+
+        // Sons (Atualizados com os seus URLs)
+        const correctSound = new Audio('https://github.com/FilhodeGleb/quizz-biblico/raw/main/pointsg.mp3');
+        const incorrectSound = new Audio('https://github.com/FilhodeGleb/quizz-biblico/raw/main/perdeu.mp3');
         const blockCompleteSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-video-game-cheers-2060.mp3');
         const victorySound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-game-success-alert-2009.mp3');
         
@@ -279,7 +285,11 @@
             
             if (screenId === 'home-screen') {
                 updateProgressDisplay();
-                if (bgMusic && bgMusic.paused) { // Toca a música apenas se estiver pausada
+                // Alterna a música de fundo e a reproduz
+                bgMusic.src = backgroundMusicUrls[currentMusicIndex];
+                currentMusicIndex = (currentMusicIndex + 1) % backgroundMusicUrls.length; // Avança para a próxima música
+                
+                if (bgMusic && bgMusic.paused) { 
                     bgMusic.play().catch(e => console.log("Erro ao tentar tocar a música: ", e));
                 }
             }
@@ -345,6 +355,8 @@
                 const button = document.createElement('button');
                 button.textContent = answer;
                 button.className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all text-base sm:text-lg';
+                // Adicionei um atributo de dados para armazenar o índice da resposta, tornando a lógica mais robusta
+                button.dataset.answerIndex = index; 
                 button.onclick = () => handleAnswer(index);
                 answerOptions.appendChild(button);
             });
@@ -354,8 +366,8 @@
             const questionData = quizData[currentTopic][currentQuestionIndex];
             const isCorrect = selectedIndex === questionData.correct;
             const feedbackMessage = document.getElementById('feedback-message');
-            const answerOptionsDiv = document.getElementById('answer-options'); // Obter a div pai
-            const answerButtons = answerOptionsDiv.children; // Obter a coleção de botões filhos
+            const answerOptionsDiv = document.getElementById('answer-options'); 
+            const answerButtons = answerOptionsDiv.children; 
 
             // Desabilitar todos os botões imediatamente
             for (let i = 0; i < answerButtons.length; i++) {
@@ -366,13 +378,15 @@
             if (isCorrect) {
                 score++;
                 correctSound.play().catch(e => console.log("Erro ao tocar som de acerto: ", e));
+                // Usar o selectedIndex diretamente para estilizar o botão clicado
                 answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg';
                 feedbackMessage.textContent = "Resposta Correta!";
                 feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-green-300";
             } else {
                 incorrectSound.play().catch(e => console.log("Erro ao tocar som de erro: ", e));
+                // Estilizar o botão clicado como incorreto
                 answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-red-500 transition-all text-base sm:text-lg';
-                // Destacar a resposta correta também se o usuário errou
+                // Estilizar a resposta correta
                 answerButtons[questionData.correct].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg';
                 feedbackMessage.textContent = "Resposta Incorreta!";
                 feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-red-300";
@@ -381,23 +395,23 @@
             setTimeout(() => {
                 currentQuestionIndex++;
                 if (currentQuestionIndex % questionsPerBlock === 0 || currentQuestionIndex >= quizData[currentTopic].length) {
-                    if (currentQuestionIndex >= 30) { // Se completou todas as 30 perguntas do tópico
+                    if (currentQuestionIndex >= 30) { 
                         showVictoryScreen();
                     } else {
-                        blockCompleteSound.play().catch(e => console.log("Erro ao tocar som de bloco completo: ", e)); // Toca som de palmas ao passar de 10 perguntas
+                        blockCompleteSound.play().catch(e => console.log("Erro ao tocar som de bloco completo: ", e)); 
                         showResults();
                     }
                 } else {
                     displayQuestion();
                 }
-            }, 2000); // Espera 2 segundos antes de ir para a próxima pergunta
+            }, 2000); 
         }
 
         function showResults() {
             progress[currentTopic] = currentQuestionIndex;
             saveProgress();
             
-            document.getElementById('results-text').textContent = `Você acertou ${score} de ${questionsPerBlock} perguntas.`;
+            document.getElementById('results-text').textContent = `Você acertou ${score} de ${questionsPerBlock} perguntas.` ;
             
             const buttonsContainer = document.getElementById('results-buttons');
             buttonsContainer.innerHTML = '';
@@ -422,8 +436,7 @@
         }
 
         function showVictoryScreen() {
-            victorySound.play().catch(e => console.log("Erro ao tocar som de vitória: ", e)); // Toca som de vitória
-            // Define o plano de fundo da tela de vitória com base no tópico
+            victorySound.play().catch(e => console.log("Erro ao tocar som de vitória: ", e)); 
             victoryScreen.className = `min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center background-${currentTopic}`;
             showScreen('victory-screen');
         }
@@ -431,13 +444,11 @@
         // --- INICIALIZAÇÃO ---
         window.onload = () => {
             loadProgress();
-            // Mostrar a tela de carregamento inicial
             initialLoadScreen.classList.remove('hidden');
-            homeScreen.classList.add('hidden'); // Certifica que a home screen está oculta no início
+            homeScreen.classList.add('hidden'); 
             
-            // Adicionar event listener para o botão de iniciar o app
             startAppButton.addEventListener('click', () => {
-                showScreen('home-screen'); // Isso irá para a home screen e tentará tocar a música
+                showScreen('home-screen'); 
             });
         };
     </script>
