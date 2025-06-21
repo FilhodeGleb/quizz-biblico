@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Bíblico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .background-geografia {
+            background-image: url('https://images.unsplash.com/photo-1526778548025-1db135a44363?q=80&w=2070&auto=format&fit=crop');
+        }
+        .background-pessoas {
+            background-image: url('https://images.unsplash.com/photo-1509652219539-444988a631a3?q=80&w=2070&auto=format&fit=crop');
+        }
+        .background-eventos {
+            background-image: url('https://images.unsplash.com/photo-1606563428982-113b2c243888?q=80&w=1932&auto=format&fit=crop');
+        }
+        .glassmorphism {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+
+    <!-- Música de Fundo da Tela Inicial -->
+    <!-- Por favor, substitua 'URL_DA_SUA_MUSICA_DE_FUNDO.mp3' pelo caminho do seu arquivo de áudio. -->
+    <!-- Removido o 'autoplay' para resolver o erro "play() failed because the user didn't interact" -->
+    <audio id="bg-music" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-level-music-610.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <!-- Tela de Carregamento/Inicialização (para interação inicial) -->
+    <div id="initial-load-screen" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900">
+        <h1 class="text-4xl font-bold mb-6 text-amber-300 animate-pulse">Carregando Quiz Bíblico...</h1>
+        <button id="start-app-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+            Iniciar Quiz
+        </button>
+    </div>
+
+    <!-- Tela Inicial (Menu de Tópicos) -->
+    <div id="home-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+        <h1 class="text-3xl sm:text-4xl font-bold mb-2 text-amber-300 text-center">Quiz Bíblico</h1>
+        <p class="text-sm sm:text-base text-slate-300 mb-8 text-center">Escolha um tópico para começar</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl px-2 sm:px-0">
+            <!-- Tópico: Geografia -->
+            <div class="bg-slate-800 rounded-lg p-5 sm:p-6 shadow-lg text-center flex flex-col justify-between hover:ring-2 ring-amber-400 transition-all">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold mb-2 text-cyan-300">Geografia</h2>
+                    <p class="text-sm sm:text-base text-slate-400 mb-4">Teste seus conhecimentos sobre os lugares da Bíblia.</p>
+                </div>
+                <div>
+                    <p id="progress-geografia" class="text-base sm:text-lg mb-4 font-semibold">0/30</p>
+                    <button onclick="startQuiz('geografia')" class="bg-cyan-600 hover:bg-cyan-700 w-full text-white font-bold py-2 px-4 rounded-lg text-base">Jogar</button>
+                </div>
+            </div>
+
+            <!-- Tópico: Pessoas -->
+            <div class="bg-slate-800 rounded-lg p-5 sm:p-6 shadow-lg text-center flex flex-col justify-between hover:ring-2 ring-amber-400 transition-all">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold mb-2 text-rose-300">Pessoas</h2>
+                    <p class="text-sm sm:text-base text-slate-400 mb-4">Você conhece os personagens das Escrituras?</p>
+                </div>
+                <div>
+                    <p id="progress-pessoas" class="text-base sm:text-lg mb-4 font-semibold">0/30</p>
+                    <button onclick="startQuiz('pessoas')" class="bg-rose-600 hover:bg-rose-700 w-full text-white font-bold py-2 px-4 rounded-lg text-base">Jogar</button>
+                </div>
+            </div>
+
+            <!-- Tópico: Eventos -->
+            <div class="bg-slate-800 rounded-lg p-5 sm:p-6 shadow-lg text-center flex flex-col justify-between hover:ring-2 ring-amber-400 transition-all">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold mb-2 text-lime-300">Eventos</h2>
+                    <p class="text-sm sm:text-base text-slate-400 mb-4">Relembre os grandes acontecimentos da narrativa bíblica.</p>
+                </div>
+                <div>
+                    <p id="progress-eventos" class="text-base sm:text-lg mb-4 font-semibold">0/30</p>
+                    <button onclick="startQuiz('eventos')" class="bg-lime-600 hover:bg-lime-700 w-full text-white font-bold py-2 px-4 rounded-lg text-base">Jogar</button>
+                </div>
+            </div>
+        </div>
+        <div id="feedback-message-home" class="mt-4 text-center text-red-400"></div>
+    </div>
+
+    <!-- Tela do Quiz -->
+    <div id="quiz-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center">
+        <div id="quiz-container" class="w-full max-w-2xl glassmorphism p-6 sm:p-8 rounded-xl shadow-2xl">
+            <div id="quiz-header" class="flex justify-between items-center mb-4">
+                 <p id="progress-text" class="text-sm sm:text-base font-semibold text-slate-300">Pergunta 1 de 10</p>
+                 <button onclick="showScreen('home-screen')" class="text-sm sm:text-base text-slate-300 hover:text-white py-1 px-2 rounded">Sair</button>
+            </div>
+            <p id="question-text" class="text-lg sm:text-2xl font-semibold mb-6 text-center"></p>
+            <div id="answer-options" class="grid grid-cols-1 gap-3 sm:gap-4">
+                <!-- Opções de resposta serão inseridas aqui -->
+            </div>
+             <div id="feedback-message" class="mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold"></div>
+        </div>
+    </div>
+    
+    <!-- Tela de Resultados do Bloco -->
+    <div id="results-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center">
+        <div class="w-full max-w-md text-center glassmorphism p-6 sm:p-8 rounded-xl shadow-2xl">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-4">Fim do Bloco!</h2>
+            <p id="results-text" class="text-base sm:text-xl mb-6">Você acertou X de 10 perguntas.</p>
+            <div id="results-buttons" class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                 <!-- Botões de continuar/voltar serão inseridos aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Vitória Final -->
+    <div id="victory-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center">
+        <div class="w-full max-w-md text-center glassmorphism p-8 rounded-xl shadow-2xl">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-green-300 animate-bounce">Vitória!</h2>
+            <p class="text-lg sm:text-xl mb-6 text-slate-200">Parabéns! Você completou este tópico com maestria.</p>
+            <p class="text-base sm:text-lg mb-8 text-slate-300 italic">
+                "Combati o bom combate, terminei a corrida, guardei a fé." - 2 Timóteo 4:7
+            </p>
+            <button onclick="showScreen('home-screen')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg">Voltar ao Menu Principal</button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- BANCO DE DADOS DAS PERGUNTAS ---
+        const quizData = {
+            geografia: [
+                // Bloco 1
+                { question: "Em qual rio Jesus foi batizado por João Batista?", answers: ["Rio Nilo", "Rio Jordão", "Rio Tigre", "Rio Eufrates"], correct: 1 },
+                { question: "Qual cidade é frequentemente chamada de 'Cidade de Davi'?", answers: ["Nazaré", "Jericó", "Jerusalém", "Belém"], correct: 2 },
+                { question: "Perto de qual mar Jesus realizou grande parte de seu ministério?", answers: ["Mar Morto", "Mar Vermelho", "Mar Mediterrâneo", "Mar da Galileia"], correct: 3 },
+                { question: "Em qual montanha Moisés recebeu os Dez Mandamentos?", answers: ["Monte Carmelo", "Monte das Oliveiras", "Monte Sinai", "Monte Hermom"], correct: 2 },
+                { question: "Qual era o nome da terra prometida por Deus a Abraão e seus descendentes?", answers: ["Egito", "Canaã", "Babilônia", "Assíria"], correct: 1 },
+                { question: "Qual cidade foi destruída junto com Gomorra?", answers: ["Ur", "Sodoma", "Nínive", "Babel"], correct: 1 },
+                { question: "O apóstolo Paulo naufragou na ilha de...?", answers: ["Creta", "Chipre", "Malta", "Patmos"], correct: 2 },
+                { question: "Qual foi a primeira cidade que os israelitas conquistaram em Canaã sob a liderança de Josué?", answers: ["Ai", "Jericó", "Jerusalém", "Hebron"], correct: 1 },
+                { question: "De qual cidade era o profeta Jonas quando fugiu de Deus?", answers: ["Jope", "Társis", "Nínive", "Babilônia"], correct: 0 },
+                { question: "Onde Jesus realizou seu primeiro milagre, transformando água em vinho?", answers: ["Cafarnaum", "Naim", "Caná", "Betânia"], correct: 2 },
+                // Bloco 2
+                { question: "Qual o nome do jardim onde Adão e Eva viveram?", answers: ["Jardim de Getsêmani", "Jardim do Éden", "Jardim do Rei", "Jardim de Susã"], correct: 1 },
+                { question: "Em qual país José se tornou governador?", answers: ["Israel", "Babilônia", "Egito", "Pérsia"], correct: 2 },
+                { question: "O Monte das Oliveiras fica próximo a qual cidade?", answers: ["Belém", "Jerusalém", "Jericó", "Samaria"], correct: 1 },
+                { question: "Em qual deserto os israelitas vagaram por 40 anos?", answers: ["Deserto da Judeia", "Deserto do Saara", "Deserto de Sinai", "Deserto da Arábia"], correct: 2 },
+                { question: "Qual rio foi dividido por Elias e Eliseu?", answers: ["Rio Quebar", "Rio Jordão", "Rio de Gion", "Rio Pisom"], correct: 1 },
+                { question: "Qual era a capital do Reino do Norte de Israel?", answers: ["Jerusalém", "Siquém", "Tirza", "Samaria"], correct: 3 },
+                { question: "A Torre de Babel foi construída na terra de...?", answers: ["Sinar", "Harã", "Midiã", "Parã"], correct: 0 },
+                { question: "De qual cidade Lídia, vendedora de púrpura, era?", answers: ["Filipos", "Tiatira", "Éfeso", "Colossos"], correct: 1 },
+                { question: "Qual cidade foi a capital do império de Nabucodonosor?", answers: ["Nínive", "Susa", "Babilônia", "Persépolis"], correct: 2 },
+                { question: "Onde Paulo estava quando escreveu a carta aos Filipenses?", answers: ["Em um navio", "No templo", "Em casa", "Na prisão"], correct: 3 },
+                 // Bloco 3
+                { question: "Qual é o mar que os israelitas atravessaram ao fugir do Egito?", answers: ["Mar da Galileia", "Mar Morto", "Mar Vermelho", "Mar Mediterrâneo"], correct: 2 },
+                { question: "Em qual cidade Paulo teve sua conversão a caminho?", answers: ["Jerusalém", "Damasco", "Antioquia", "Tarso"], correct: 1 },
+                { question: "A cidade de Éfeso era famosa pelo templo de qual deusa grega?", answers: ["Atena", "Afrodite", "Hera", "Ártemis"], correct: 3 },
+                { question: "Qual era a cidade natal de Abraão?", answers: ["Harã", "Siquém", "Ur dos Caldeus", "Betel"], correct: 2 },
+                { question: "Para qual cidade o profeta Elias fugiu da rainha Jezabel?", answers: ["Jezreel", "Berseba", "Damasco", "Tiro"], correct: 1 },
+                { question: "Qual o nome do poço onde Jesus conversou com a mulher samaritana?", answers: ["Poço de Hagar", "Poço de Mara", "Poço de Jacó", "Poço de Bete-Esda"], correct: 2 },
+                { question: "A ilha de Patmos é conhecida por ser o local onde qual livro foi escrito?", answers: ["Atos", "Apocalipse", "Hebreus", "Romanos"], correct: 1 },
+                { question: "Qual o rio que banhava o Jardim do Éden?", answers: ["Não é mencionado", "Rio Eufrates", "Rio Nilo", "Rio Tigre"], correct: 1 },
+                { question: "Qual o nome do vale onde Davi lutou com Golias?", answers: ["Vale de Acor", "Vale de Jezreel", "Vale de Sidim", "Vale de Elá"], correct: 3 },
+                { question: "Qual cidade era o centro do ministério de Paulo na Ásia Menor?", answers: ["Antioquia", "Tarso", "Éfeso", "Derbe"], correct: 0 },
+            ],
+            pessoas: [
+                // Bloco 1
+                { question: "Quem foi o primeiro homem criado por Deus?", answers: ["Caim", "Sete", "Adão", "Noé"], correct: 2 },
+                { question: "Quem construiu a arca para sobreviver ao Dilúvio?", answers: ["Noé", "Matusalém", "Lameque", "Jafé"], correct: 0 },
+                { question: "Quem é conhecido como o 'Pai da Fé'?", answers: ["Isaque", "Jacó", "Moisés", "Abraão"], correct: 3 },
+                { question: "Qual dos filhos de Jacó foi vendido como escravo por seus irmãos?", answers: ["Rúben", "José", "Benjamim", "Judá"], correct: 1 },
+                { question: "Quem liderou os israelitas para fora do Egito?", answers: ["Josué", "Arão", "Moisés", "Calebe"], correct: 2 },
+                { question: "Quem derrotou o gigante Golias?", answers: ["Saul", "Davi", "Jônatas", "Abner"], correct: 1 },
+                { question: "Qual profeta foi alimentado por corvos?", answers: ["Eliseu", "Elias", "Isaías", "Jeremias"], correct: 1 },
+                { question: "Quem foi a única juíza mulher de Israel?", answers: ["Ester", "Rute", "Débora", "Miriã"], correct: 2 },
+                { question: "Qual apóstolo negou Jesus três vezes?", answers: ["Judas", "Tomé", "João", "Pedro"], correct: 3 },
+                { question: "Quem é o autor da maior parte dos Salmos?", answers: ["Salomão", "Asafe", "Davi", "Moisés"], correct: 2 },
+                 // Bloco 2
+                { question: "Quem foi a esposa de Isaque?", answers: ["Sara", "Rebeca", "Lia", "Raquel"], correct: 1 },
+                { question: "Qual rei construiu o primeiro Templo em Jerusalém?", answers: ["Davi", "Salomão", "Ezequias", "Josias"], correct: 1 },
+                { question: "Quem foi o profeta que ungiu Davi como rei?", answers: ["Natã", "Samuel", "Elias", "Gad"], correct: 1 },
+                { question: "Qual era a profissão de Mateus (Levi) antes de seguir Jesus?", answers: ["Pescador", "Carpinteiro", "Coletor de impostos", "Fariseu"], correct: 2 },
+                { question: "Quem era o irmão de Moisés que se tornou o primeiro sumo sacerdote?", answers: ["Eleazar", "Nadabe", "Arão", "Ita"], correct: 2 },
+                { question: "Qual rainha judia salvou seu povo da destruição?", answers: ["Jezabel", "Atalia", "Ester", "Vasti"], correct: 2 },
+                { question: "Quem foi o homem mais forte da Bíblia?", answers: ["Golias", "Sansão", "Gideão", "Benaia"], correct: 1 },
+                { question: "Quem foi o primeiro mártir cristão?", answers: ["Tiago", "Paulo", "Estêvão", "Pedro"], correct: 2 },
+                { question: "Quem foi o sogro de Moisés?", answers: ["Reuel", "Jetro", "Ambos estão corretos", "Nenhum está correto"], correct: 2 }, // Jetro também era chamado Reuel
+                { question: "Qual profeta foi lançado numa cova de leões?", answers: ["Jeremias", "Ezequiel", "Daniel", "Oseias"], correct: 2 },
+                 // Bloco 3
+                { question: "Quem foi o profeta que casou com uma prostituta como um ato simbólico?", answers: ["Oseias", "Amós", "Jonas", "Miqueias"], correct: 0 },
+                { question: "Quem era o pai de João Batista?", answers: ["Simeão", "Anás", "José", "Zacarias"], correct: 3 },
+                { question: "Qual dos filhos de Noé é ancestral do povo de Israel?", answers: ["Sem", "Cam", "Jafé", "Nenhum deles"], correct: 0 },
+                { question: "Quem foi o sucessor de Moisés na liderança de Israel?", answers: ["Calebe", "Josué", "Arão", "Gideão"], correct: 1 },
+                { question: "Quem interpretou os sonhos do Faraó no Egito?", answers: ["Daniel", "José", "Moisés", "Abraão"], correct: 1 },
+                { question: "Quem foi a mulher de Ló que se transformou em uma estátua de sal?", answers: ["Não é nomeada", "Edna", "Ada", "Lia"], correct: 0 },
+                { question: "Qual o nome do apóstolo que substituiu Judas Iscariotes?", answers: ["Barnabé", "Silas", "Apolo", "Matias"], correct: 3 },
+                { question: "Quem era o rei da Babilônia quando Daniel estava lá?", answers: ["Ciro", "Dario", "Nabucodonosor", "Belsazar"], correct: 2 },
+                { question: "Quem foi a mãe de Samuel?", answers: ["Penina", "Ana", "Raquel", "Elisabete"], correct: 1 },
+                { question: "Qual era o nome do irmão de Marta e Maria que Jesus ressuscitou?", answers: ["Simão", "Lázaro", "Filipe", "André"], correct: 1 }
+            ],
+            eventos: [
+                // Bloco 1
+                { question: "Qual evento marcou o início do ministério público de Jesus?", answers: ["A Transfiguração", "A Tentação no Deserto", "Seu Batismo", "A Última Ceia"], correct: 2 },
+                { question: "Qual foi a primeira praga enviada ao Egito?", answers: ["Gafanhotos", "Trevas", "Morte dos primogênitos", "Água em sangue"], correct: 3 },
+                { question: "O que os israelitas estavam fazendo quando Moisés desceu do Monte Sinai com os Dez Mandamentos?", answers: ["Orando", "Adorando um bezerro de ouro", "Construindo o tabernáculo", "Descansando"], correct: 1 },
+                { question: "Qual evento é comemorado na Páscoa judaica?", answers: ["A criação do mundo", "A entrega da Lei", "A libertação do Egito", "A conquista de Canaã"], correct: 2 },
+                { question: "O que aconteceu no dia de Pentecostes, registrado no livro de Atos?", answers: ["A ascensão de Jesus", "A ressurreição de Lázaro", "O derramamento do Espírito Santo", "A conversão de Paulo"], correct: 2 },
+                { question: "Qual evento levou à dispersão da humanidade por toda a Terra?", answers: ["O Dilúvio", "A destruição de Sodoma", "A Torre de Babel", "A escravidão no Egito"], correct: 2 },
+                { question: "Em qual evento Jesus foi glorificado na presença de Pedro, Tiago e João?", answers: ["No Sermão da Montanha", "Na Transfiguração", "Na multiplicação dos pães", "Na cura do cego Bartimeu"], correct: 1 },
+                { question: "A queda dos muros de qual cidade ocorreu após os israelitas marcharem ao seu redor?", answers: ["Jerusalém", "Jericó", "Babilônia", "Ai"], correct: 1 },
+                { question: "O que aconteceu quando Paulo e Silas estavam presos em Filipos?", answers: ["Eles fugiram", "Um anjo os libertou", "Um terremoto abriu as portas da prisão", "O carcereiro os soltou"], correct: 2 },
+                { question: "Qual foi o sinal da aliança de Deus com Noé após o Dilúvio?", answers: ["A pomba", "O ramo de oliveira", "A circuncisão", "O arco-íris"], correct: 3 },
+                 // Bloco 2
+                { question: "Qual evento é conhecido como 'A Última Ceia'?", answers: ["A primeira refeição de Jesus com os discípulos", "A refeição onde instituiu a Eucaristia", "A multiplicação dos pães", "A refeição na casa de Zaqueu"], correct: 1 },
+                { question: "Qual foi a décima e última praga do Egito?", answers: ["Piolhos", "Trevas", "Morte dos primogênitos", "Chuva de pedras"], correct: 2 },
+                { question: "Qual evento levou José a se tornar governador do Egito?", answers: ["Sua venda pelos irmãos", "Sua sabedoria", "Sua interpretação dos sonhos do Faraó", "Sua fuga da prisão"], correct: 2 },
+                { question: "O que marcou a separação entre o Reino do Norte (Israel) e o Reino do Sul (Judá)?", answers: ["A morte de Davi", "A morte de Salomão", "A conquista assíria", "A idolatria de Jeroboão"], correct: 1 },
+                { question: "Qual evento foi o teste final da fé de Abraão por Deus?", answers: ["Sair de sua terra", "A circuncisão", "Oferecer seu filho Isaque em sacrifício", "Lutar contra quatro reis"], correct: 2 },
+                { question: "O que aconteceu no Monte Carmelo entre Elias e os profetas de Baal?", answers: ["Uma corrida", "Um debate", "Um desafio de sacrifício com fogo", "Uma batalha"], correct: 2 },
+                { question: "Qual evento levou o rei Davi a escrever o Salmo 51?", answers: ["Sua vitória sobre Golias", "Sua unção como rei", "Seu arrependimento pelo pecado com Bate-Seba", "A morte de seu filho Absalão"], correct: 2 },
+                { question: "A 'dedicação do Templo' foi um grande evento no reinado de qual rei?", answers: ["Davi", "Josias", "Ezequias", "Salomão"], correct: 3 },
+                { question: "Qual evento marca o início do exílio babilônico para o Reino de Judá?", answers: ["A destruição de Samaria", "A queda de Jerusalém e do Templo", "A ascensão do rei Ciro", "A profecia de Jeremias"], correct: 1 },
+                { question: "O que Jesus fez na casa de Zaqueu que marcou a vida dele?", answers: ["Curou-o", "Expulsou demônios", "Comeu com ele e ofereceu salvação", "Contou uma parábola"], correct: 2 },
+                // Bloco 3
+                { question: "A 'passagem do Mar Vermelho' foi um milagre durante qual evento?", answers: ["A conquista de Canaã", "O Êxodo do Egito", "A peregrinação a Jerusalém", "A fuga de Davi"], correct: 1 },
+                { question: "Qual o evento em que Jesus acalmou uma tempestade?", answers: ["Enquanto caminhava para Emaús", "No Mar da Galileia com os discípulos", "Durante o Sermão da Montanha", "Na festa das cabanas"], correct: 1 },
+                { question: "A 'escrita na parede' ocorreu durante um banquete de qual rei?", answers: ["Nabucodonosor", "Dario", "Belsazar", "Ciro"], correct: 2 },
+                { question: "Qual evento levou à criação das doze tribos de Israel?", answers: ["O nascimento dos filhos de Jacó", "A aliança com Abraão", "A divisão da terra de Canaã", "A saída do Egito"], correct: 0 },
+                { question: "A 'ressurreição de Lázaro' demonstrou o poder de Jesus sobre o quê?", answers: ["A natureza", "Os demônios", "A doença", "A morte"], correct: 3 },
+                { question: "Qual evento resultou na perda da força de Sansão?", answers: ["A luta com um leão", "A quebra de seu voto nazireu ao ter o cabelo cortado", "A traição de seus pais", "A destruição do templo de Dagom"], correct: 1 },
+                { question: "O Sermão da Montanha contém qual famosa coleção de ensinamentos?", answers: ["As Parábolas", "Os Dez Mandamentos", "As Bem-Aventuranças", "As Profecias"], correct: 2 },
+                { question: "A 'destruição do primeiro templo' foi realizada por qual império?", answers: ["Egípcio", "Assírio", "Babilônico", "Persa"], correct: 2 },
+                { question: "Em qual evento o véu do templo se rasgou em dois?", answers: ["No nascimento de Jesus", "No batismo de Jesus", "Na crucificação de Jesus", "No dia de Pentecostes"], correct: 2 },
+                { question: "A 'Conversão de Saulo' aconteceu a caminho de qual cidade?", answers: ["Jerusalém", "Antioquia", "Roma", "Damasco"], correct: 3 }
+            ],
+        };
+
+        // --- ESTADO DO JOGO E LÓGICA ---
+        let currentTopic = '';
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let progress = { geografia: 0, pessoas: 0, eventos: 0 };
+        const questionsPerBlock = 10;
+
+        // Elementos da interface
+        const initialLoadScreen = document.getElementById('initial-load-screen');
+        const startAppButton = document.getElementById('start-app-button');
+        const homeScreen = document.getElementById('home-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const victoryScreen = document.getElementById('victory-screen');
+        const bgMusic = document.getElementById('bg-music');
+
+        // Sons (Por favor, substitua os URLs pelos seus próprios arquivos de áudio)
+        const correctSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-in-a-game-2034.mp3');
+        const incorrectSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-bass-bubble-1718.mp3');
+        const blockCompleteSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-video-game-cheers-2060.mp3');
+        const victorySound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-game-success-alert-2009.mp3');
+        
+        function showScreen(screenId) {
+            // Pausar música de fundo quando sair da tela inicial
+            if (screenId !== 'home-screen' && bgMusic && !bgMusic.paused) {
+                bgMusic.pause();
+                bgMusic.currentTime = 0; // Reinicia a música para a próxima vez
+            }
+
+            initialLoadScreen.classList.add('hidden');
+            homeScreen.classList.add('hidden');
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            victoryScreen.classList.add('hidden');
+            document.getElementById(screenId).classList.remove('hidden');
+            
+            if (screenId === 'home-screen') {
+                updateProgressDisplay();
+                if (bgMusic && bgMusic.paused) { // Toca a música apenas se estiver pausada
+                    bgMusic.play().catch(e => console.log("Erro ao tentar tocar a música: ", e));
+                }
+            }
+        }
+
+        function loadProgress() {
+            const savedProgress = localStorage.getItem('quizBiblicoProgress');
+            if (savedProgress) {
+                progress = JSON.parse(savedProgress);
+            }
+        }
+        
+        function saveProgress() {
+            localStorage.setItem('quizBiblicoProgress', JSON.stringify(progress));
+        }
+
+        function updateProgressDisplay() {
+            for (const topic in progress) {
+                const progressElement = document.getElementById(`progress-${topic}`);
+                if(progressElement) {
+                    progressElement.textContent = `${progress[topic] || 0}/30`;
+                }
+            }
+        }
+        
+        function startQuiz(topic) {
+            currentTopic = topic;
+            currentQuestionIndex = progress[topic] || 0;
+            score = 0;
+            
+            if (currentQuestionIndex >= 30) {
+                const feedbackMessage = document.getElementById('feedback-message-home');
+                if (feedbackMessage) {
+                    feedbackMessage.textContent = "Você já completou este tópico!";
+                    feedbackMessage.className = "text-center text-red-400 mt-4";
+                    setTimeout(() => feedbackMessage.textContent = '', 3000);
+                }
+                return;
+            }
+
+            // Define o plano de fundo
+            quizScreen.className = `min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center background-${topic}`;
+            resultsScreen.className = `hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center background-${topic}`;
+            victoryScreen.className = `hidden min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center background-${topic}`;
+
+
+            displayQuestion();
+            showScreen('quiz-screen');
+        }
+
+        function displayQuestion() {
+            const questionData = quizData[currentTopic][currentQuestionIndex];
+            const questionText = document.getElementById('question-text');
+            const answerOptions = document.getElementById('answer-options');
+            
+            document.getElementById('progress-text').textContent = `Pergunta ${ (currentQuestionIndex % questionsPerBlock) + 1 } de ${questionsPerBlock}`;
+            questionText.textContent = questionData.question;
+            answerOptions.innerHTML = '';
+            
+            document.getElementById('feedback-message').innerHTML = '';
+
+            questionData.answers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.textContent = answer;
+                button.className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all text-base sm:text-lg';
+                button.onclick = () => handleAnswer(index);
+                answerOptions.appendChild(button);
+            });
+        }
+        
+        function handleAnswer(selectedIndex) {
+            const questionData = quizData[currentTopic][currentQuestionIndex];
+            const isCorrect = selectedIndex === questionData.correct;
+            const feedbackMessage = document.getElementById('feedback-message');
+            const answerOptionsDiv = document.getElementById('answer-options'); // Obter a div pai
+            const answerButtons = answerOptionsDiv.children; // Obter a coleção de botões filhos
+
+            // Desabilitar todos os botões imediatamente
+            for (let i = 0; i < answerButtons.length; i++) {
+                answerButtons[i].disabled = true;
+            }
+
+            // Aplicar estilos com base na correção
+            if (isCorrect) {
+                score++;
+                correctSound.play().catch(e => console.log("Erro ao tocar som de acerto: ", e));
+                answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg';
+                feedbackMessage.textContent = "Resposta Correta!";
+                feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-green-300";
+            } else {
+                incorrectSound.play().catch(e => console.log("Erro ao tocar som de erro: ", e));
+                answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-red-500 transition-all text-base sm:text-lg';
+                // Destacar a resposta correta também se o usuário errou
+                answerButtons[questionData.correct].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg';
+                feedbackMessage.textContent = "Resposta Incorreta!";
+                feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-red-300";
+            }
+            
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex % questionsPerBlock === 0 || currentQuestionIndex >= quizData[currentTopic].length) {
+                    if (currentQuestionIndex >= 30) { // Se completou todas as 30 perguntas do tópico
+                        showVictoryScreen();
+                    } else {
+                        blockCompleteSound.play().catch(e => console.log("Erro ao tocar som de bloco completo: ", e)); // Toca som de palmas ao passar de 10 perguntas
+                        showResults();
+                    }
+                } else {
+                    displayQuestion();
+                }
+            }, 2000); // Espera 2 segundos antes de ir para a próxima pergunta
+        }
+
+        function showResults() {
+            progress[currentTopic] = currentQuestionIndex;
+            saveProgress();
+            
+            document.getElementById('results-text').textContent = `Você acertou ${score} de ${questionsPerBlock} perguntas.`;
+            
+            const buttonsContainer = document.getElementById('results-buttons');
+            buttonsContainer.innerHTML = '';
+            
+            if(currentQuestionIndex < 30) {
+                const continueButton = document.createElement('button');
+                continueButton.textContent = 'Próximo Bloco';
+                continueButton.className = 'bg-green-600 hover:bg-green-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
+                continueButton.onclick = () => startQuiz(currentTopic);
+                buttonsContainer.appendChild(continueButton);
+            } else {
+                // Esta parte agora é tratada pela showVictoryScreen
+            }
+
+            const homeButton = document.createElement('button');
+            homeButton.textContent = 'Voltar ao Menu';
+            homeButton.className = 'bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
+            homeButton.onclick = () => showScreen('home-screen');
+            buttonsContainer.appendChild(homeButton);
+            
+            showScreen('results-screen');
+        }
+
+        function showVictoryScreen() {
+            victorySound.play().catch(e => console.log("Erro ao tocar som de vitória: ", e)); // Toca som de vitória
+            // Define o plano de fundo da tela de vitória com base no tópico
+            victoryScreen.className = `min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-cover bg-center background-${currentTopic}`;
+            showScreen('victory-screen');
+        }
+        
+        // --- INICIALIZAÇÃO ---
+        window.onload = () => {
+            loadProgress();
+            // Mostrar a tela de carregamento inicial
+            initialLoadScreen.classList.remove('hidden');
+            homeScreen.classList.add('hidden'); // Certifica que a home screen está oculta no início
+            
+            // Adicionar event listener para o botão de iniciar o app
+            startAppButton.addEventListener('click', () => {
+                showScreen('home-screen'); // Isso irá para a home screen e tentará tocar a música
+            });
+        };
+    </script>
+</body>
+</html>
