@@ -9,14 +9,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDKs - Adicionados globalmente para compatibilidade sem 'type="module"' -->
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+    <!-- As importações do Firebase SDK foram removidas, pois o ranking e o sistema de autenticação foram retirados. -->
 
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            position: relative; /* Necessário para que o footer fixo funcione corretamente */
+            min-height: 100vh; /* Garante que o body ocupe toda a altura da viewport */
+            padding-bottom: 4rem; /* Espaço para o footer fixo */
         }
         
         /* Ajuste a transparência para ver a imagem de fundo de forma mais clara e remova o blur */
@@ -253,22 +253,19 @@
                 Obrigado por jogar! Que este jogo possa ter sido um instrumento para te levar mais próximo de Deus.
             </p>
 
-            <!-- Container para ranking e botões -->
-            <div class="flex flex-col sm:flex-row justify-between items-center w-full mt-8">
-                <div id="victory-message-container" class="text-left w-full sm:w-1/2 mb-4 sm:mb-0">
-                    <p class="text-md sm:text-lg font-semibold text-slate-200">Ranking Global:</p>
-                    <ul id="leaderboard-list" class="text-left mt-2">
-                        <!-- Leaderboard items will be inserted here by Firestore -->
-                        <li class="text-center text-slate-400">Carregando ranking...</li>
-                    </ul>
-                </div>
-                <div class="w-full sm:w-1/2 flex flex-col items-center sm:items-end gap-3">
-                    <button id="next-topic-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">Próximo Tópico</button>
-                    <button id="back-to-menu-victory" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">Voltar ao Menu Principal</button>
-                </div>
+            <!-- Container para botões -->
+            <div class="flex flex-col sm:flex-row justify-center items-center w-full mt-8 gap-3">
+                <button id="next-topic-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">Próximo Tópico</button>
+                <button id="back-to-menu-victory" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">Voltar ao Menu Principal</button>
             </div>
         </div>
     </div>
+
+    <!-- Rodapé fixo -->
+    <footer class="fixed bottom-0 left-0 w-full bg-slate-950 p-2 text-center text-sm text-slate-400 border-t border-slate-700 flex items-center justify-center">
+        <span class="text-yellow-400 text-lg mr-2">⭐</span>
+        <span>Feito por Filho De Gleb</span>
+    </footer>
 
 
     <script>
@@ -390,12 +387,6 @@
         let rationaleAdvanceTimeoutId; // ID do setTimeout para o avanço do racional
         const ACCURACY_THRESHOLD = 50; // Limiar de precisão para considerar o tempo (50%)
 
-        // Firebase instances
-        let appFirebase;
-        let db;
-        let auth;
-        let firebaseUserId = null; // Changed to match Firebase's uid or anonymous ID
-
         // Objeto para armazenar o progresso em cada tópico
         // Agora inclui totalScore e totalTimeTaken para cálculos gerais
         let progress = {
@@ -444,7 +435,6 @@
         const victoryCylinderContainer = document.getElementById('victory-cylinder-container');
         const victoryCylinderFill = document.getElementById('victory-cylinder-fill');
         const victoryCylinderPercentageText = document.getElementById('victory-cylinder-percentage-text');
-        const leaderboardList = document.getElementById('leaderboard-list');
 
 
         // --- CONFIGURAÇÃO DE RECURSOS ---
@@ -1004,92 +994,6 @@
         }
 
         /**
-         * Adiciona a pontuação do jogador ao Firestore.
-         * @param {string} username - O nome do jogador.
-         * @param {number} score - A pontuação combinada (0-100%).
-         */
-        async function addScoreToFirestoreLeaderboard(username, score) {
-            if (!db || !firebaseUserId) {
-                console.error("Firestore não inicializado ou usuário não autenticado. Não foi possível adicionar a pontuação.");
-                return;
-            }
-
-            try {
-                // Caminho para a coleção de ranking (pública)
-                // Usando `__app_id` que é um identificador único para sua aplicação no Canvas
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                const leaderboardCollectionRef = db.collection(`artifacts/${appId}/public/data/leaderboard`);
-                
-                await leaderboardCollectionRef.add({
-                    username: username,
-                    score: score,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(), // Adiciona um timestamp para ordenação
-                    userId: firebaseUserId // Armazena o ID do usuário (anônimo ou não)
-                });
-                console.log('Pontuação adicionada ao Firestore com sucesso!');
-            } catch (e) {
-                console.error("Erro ao adicionar pontuação ao Firestore: ", e);
-            }
-        }
-
-        /**
-         * Configura um listener em tempo real para o ranking do Firestore.
-         * Agora, busca todos os documentos e os ordena no cliente para evitar erros de índice.
-         */
-        function setupGlobalLeaderboardListener() {
-            if (!db) {
-                console.error("Firestore não inicializado. Não foi possível configurar o listener do ranking.");
-                return;
-            }
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            // Altere a consulta para não usar orderBy() no Firestore, pois isso requer um índice.
-            // Em vez disso, buscaremos os documentos e os ordenaremos no cliente.
-            const q = db.collection(`artifacts/${appId}/public/data/leaderboard`); 
-
-            q.onSnapshot((snapshot) => {
-                leaderboardList.innerHTML = ''; // Limpa a lista atual
-                if (snapshot.empty) {
-                    leaderboardList.innerHTML = '<li class="text-center text-slate-400">Nenhuma pontuação global ainda. Seja o primeiro!</li>';
-                    return;
-                }
-
-                let allScores = [];
-                snapshot.docs.forEach((doc) => { // Use snapshot.docs to iterate over documents
-                    allScores.push(doc.data());
-                });
-
-                // Ordena os resultados no cliente por score (descrescente) e depois por timestamp (crescente)
-                allScores.sort((a, b) => {
-                    if (b.score !== a.score) {
-                        return b.score - a.score; // Pontuação mais alta primeiro
-                    }
-                    // Se as pontuações são iguais, ordena pelo timestamp (mais antigo primeiro)
-                    // Converte Firestore Timestamp para milissegundos para comparação
-                    const timestampA = a.timestamp ? a.timestamp.toMillis() : 0;
-                    const timestampB = b.timestamp ? b.timestamp.toMillis() : 0;
-                    return timestampA - timestampB;
-                });
-
-                // Exibe apenas os top 5 jogadores
-                allScores.slice(0, 5).forEach((data, index) => {
-                    const listItem = document.createElement('li');
-                    listItem.className = 'text-sm sm:text-base text-slate-300 py-1';
-                    if (index === 0) { // Primeira posição ganha a coroa
-                        listItem.innerHTML = `<span class="text-amber-400">👑</span> ${data.username}: ${Math.round(data.score)}%`;
-                    } else {
-                        listItem.textContent = `${data.username}: ${Math.round(data.score)}%`;
-                    }
-                    leaderboardList.appendChild(listItem);
-                });
-                console.log("Ranking global atualizado!");
-            }, (error) => {
-                console.error("Erro ao ouvir o ranking global: ", error);
-                leaderboardList.innerHTML = '<li class="text-center text-red-400">Erro ao carregar ranking global.</li>';
-            });
-        }
-
-
-        /**
          * Exibe a tela de vitória final quando um tópico é totalmente concluído.
          */
         function showVictoryScreen() {
@@ -1171,11 +1075,6 @@
             victoryCylinderFill.style.backgroundColor = overallCombinedScorePercentage >= 60 ? '#FBBE24' : '#EF4444'; // Dourado ou vermelho
             victoryCylinderPercentageText.textContent = `${overallTimeEfficiencyPercentage}%`;
 
-            // Adiciona a pontuação ao Firestore
-            addScoreToFirestoreLeaderboard(currentUsername, overallCombinedScorePercentage);
-            // Re-renderiza o leaderboard (o onSnapshot já fará isso automaticamente)
-            setupGlobalLeaderboardListener(); // Chama para garantir que o listener esteja ativo e atualize.
-
             victoryMusic.src = victoryMusicUrl; // Define a URL da música
             victoryMusic.play().catch(e => console.log("Erro ao tocar música de vitória: ", e)); // Toca a música
 
@@ -1200,32 +1099,6 @@
         
         // --- INICIALIZAÇÃO DO APLICATIVO ---
         window.onload = async () => {
-            // Variáveis globais do ambiente Canvas
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            // Configuração do Firebase fornecida pelo ambiente Canvas
-            const firebaseConfig = JSON.parse(__firebase_config);
-            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-            // Inicializa Firebase (usando a API global)
-            appFirebase = firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore(); // Obtenha a instância do Firestore
-            auth = firebase.auth(); // Obtenha a instância de autenticação
-
-            // Autenticação (anônima ou com token fornecido)
-            try {
-                if (initialAuthToken) {
-                    await auth.signInWithCustomToken(initialAuthToken);
-                    console.log("Autenticado com token personalizado.");
-                } else {
-                    await auth.signInAnonymously();
-                    console.log("Autenticado anonimamente.");
-                }
-                firebaseUserId = auth.currentUser?.uid; // Armazena o ID do usuário após a autenticação
-            } catch (error) {
-                console.error("Erro na autenticação Firebase:", error);
-                // Exibir mensagem de erro ao usuário, se necessário
-            }
-            
             loadProgress(); // Carrega o progresso salvo
             // Pré-carrega as imagens do quiz para uma experiência mais suave
             preloadImages(quizBackgroundImages); 
@@ -1262,14 +1135,6 @@
                 // Verifica se o racional está visível e se há um timeout ativo para ele
                 if (!rationaleText.classList.contains('hidden') && rationaleAdvanceTimeoutId) {
                     advanceQuizAfterRationale();
-                }
-            });
-
-            // Inicia o listener do ranking global assim que o Firebase for inicializado e autenticado
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    firebaseUserId = user.uid; // Garante que userId esteja definido
-                    setupGlobalLeaderboardListener(); // Inicia o listener para o ranking
                 }
             });
         };
