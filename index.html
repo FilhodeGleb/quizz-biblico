@@ -187,7 +187,6 @@
             </div>
         </div>
         <div id="feedback-message-home" class="mt-4 text-center text-red-400"></div>
-        <!-- O botão "Pular para Tela de Vitória" foi removido daqui -->
     </div>
 
     <!-- Tela do Quiz -->
@@ -251,9 +250,10 @@
             <!-- Container para ranking e botões -->
             <div class="flex flex-col sm:flex-row justify-between items-center w-full mt-8">
                 <div id="victory-message-container" class="text-left w-full sm:w-1/2 mb-4 sm:mb-0">
-                    <p class="text-md sm:text-lg font-semibold text-slate-200">Ranking Local:</p>
+                    <p class="text-md sm:text-lg font-semibold text-slate-200">Ranking Global:</p>
                     <ul id="leaderboard-list" class="text-left mt-2">
-                        <!-- Leaderboard items will be inserted here -->
+                        <!-- Leaderboard items will be inserted here by Firestore -->
+                        <li class="text-center text-slate-400">Carregando ranking...</li>
                     </ul>
                 </div>
                 <div class="w-full sm:w-1/2 flex flex-col items-center sm:items-end gap-3">
@@ -265,7 +265,12 @@
     </div>
 
 
-    <script>
+    <script type="module">
+        // Importações do Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         // --- BANCO DE DADOS DAS PERGUNTAS ---
         const quizData = {
             geografia: [
@@ -384,6 +389,11 @@
         let rationaleAdvanceTimeoutId; // ID do setTimeout para o avanço do racional
         const ACCURACY_THRESHOLD = 50; // Limiar de precisão para considerar o tempo (50%)
 
+        // Firebase instances
+        let appFirebase;
+        let db;
+        let auth;
+        let firebaseUserId = null; // Changed to match Firebase's uid or anonymous ID
 
         // Objeto para armazenar o progresso em cada tópico
         // Agora inclui totalScore e totalTimeTaken para cálculos gerais
@@ -422,7 +432,6 @@
         const cylinderPercentageText = document.getElementById('cylinder-percentage-text');
         const blockFeedbackMessage = document.getElementById('block-feedback-message');
         const overallScoreText = document.getElementById('overall-score-text');
-        // A referência para skipToVictoryButton foi removida daqui, pois o botão será removido
         const backToMenuVictoryButton = document.getElementById('back-to-menu-victory');
         const nextTopicButton = document.getElementById('next-topic-button'); // Novo botão Próximo Tópico
 
@@ -498,7 +507,7 @@
         // Imagens específicas para a tela de vitória por tópico
         const victoryTopicBackgroundImages = {
             geografia: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_225457748-stock-illustration-biblical-vector-illustration-series-jesus.png`,
-            pessoas: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_354432542-stock-illustration-biblical-vector-illustration-series-jesus-Picsart-AiImageEnhancer.jpg`,
+            pessoas: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_354432542-stock-illustration-biblical-vector-illustration-series-jesus.png`,
             eventos: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_666141214-stock-illustration-biblical-figure-illustration-series-moses-Picsart-AiImageEnhancer.jpg`
         };
 
@@ -962,7 +971,7 @@
                 continueButton.onclick = () => { 
                     currentBlockScore = 0; 
                     blockTimings = []; // Reinicia os tempos para o novo bloco
-                    startQuiz(currentTopic); 
+                    window.startQuiz(currentTopic); // Access through window
                 };
                 buttonsContainer.appendChild(continueButton);
             } 
@@ -979,7 +988,7 @@
                 currentBlockScore = 0; // Zera a pontuação do bloco para o novo jogo
                 blockTimings = []; // Zera os tempos para o novo jogo
                 saveProgress();
-                startQuiz(currentTopic, true); // Passa true para reiniciar o bloco
+                window.startQuiz(currentTopic, true); // Access through window
             };
             buttonsContainer.appendChild(restartButton);
 
@@ -987,66 +996,94 @@
             const homeButton = document.createElement('button');
             homeButton.textContent = 'Voltar ao Menu';
             homeButton.className = 'bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
-            homeButton.onclick = () => showScreen('home-screen');
+            homeButton.onclick = () => window.showScreen('home-screen'); // Access through window
             buttonsContainer.appendChild(homeButton);
             
-            showScreen('results-screen'); // Mostra a tela de resultados
+            window.showScreen('results-screen'); // Access through window
         }
 
         /**
-         * Lógica para o ranking local
+         * Adiciona a pontuação do jogador ao Firestore.
+         * @param {string} username - O nome do jogador.
+         * @param {number} score - A pontuação combinada (0-100%).
          */
-        function getLeaderboard() {
-            const leaderboard = JSON.parse(localStorage.getItem('quizBiblicoLeaderboard') || '[]');
-            return leaderboard.sort((a, b) => b.score - a.score); // Ordena do maior para o menor score
-        }
-
-        function saveLeaderboard(leaderboard) {
-            localStorage.setItem('quizBiblicoLeaderboard', JSON.stringify(leaderboard));
-        }
-
-        function updateLeaderboard(username, overallScore) {
-            let leaderboard = getLeaderboard();
-            let userFound = false;
-
-            // Verifica se o usuário já existe e atualiza a pontuação se a nova for maior
-            for (let i = 0; i < leaderboard.length; i++) {
-                if (leaderboard[i].username === username) {
-                    if (overallScore > leaderboard[i].score) {
-                        leaderboard[i].score = overallScore;
-                    }
-                    userFound = true;
-                    break;
-                }
-            }
-
-            // Se o usuário não foi encontrado, adiciona um novo
-            if (!userFound) {
-                leaderboard.push({ username: username, score: overallScore });
-            }
-
-            saveLeaderboard(leaderboard);
-            displayLeaderboard();
-        }
-
-        function displayLeaderboard() {
-            const leaderboard = getLeaderboard();
-            leaderboardList.innerHTML = ''; // Limpa a lista existente
-
-            if (leaderboard.length === 0) {
-                leaderboardList.innerHTML = '<li class="text-sm text-slate-400">Nenhuma pontuação registrada ainda.</li>';
+        async function addScoreToFirestoreLeaderboard(username, score) {
+            if (!db || !firebaseUserId) {
+                console.error("Firestore não inicializado ou usuário não autenticado. Não foi possível adicionar a pontuação.");
                 return;
             }
 
-            leaderboard.slice(0, 5).forEach((entry, index) => { // Mostra os top 5
-                const listItem = document.createElement('li');
-                listItem.className = 'text-sm sm:text-base text-slate-300 py-1';
-                if (index === 0) {
-                    listItem.innerHTML = `<span class="text-amber-400">👑</span> ${entry.username}: ${Math.round(entry.score)}%`;
-                } else {
-                    listItem.textContent = `${entry.username}: ${Math.round(entry.score)}%`;
+            try {
+                // Caminho para a coleção de ranking (pública)
+                // Usando `__app_id` que é um identificador único para sua aplicação no Canvas
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const leaderboardCollectionRef = collection(db, `artifacts/${appId}/public/data/leaderboard`);
+                
+                await addDoc(leaderboardCollectionRef, {
+                    username: username,
+                    score: score,
+                    timestamp: serverTimestamp(), // Adiciona um timestamp para ordenação
+                    userId: firebaseUserId // Armazena o ID do usuário (anônimo ou não)
+                });
+                console.log('Pontuação adicionada ao Firestore com sucesso!');
+            } catch (e) {
+                console.error("Erro ao adicionar pontuação ao Firestore: ", e);
+            }
+        }
+
+        /**
+         * Configura um listener em tempo real para o ranking do Firestore.
+         * Agora, busca todos os documentos e os ordena no cliente para evitar erros de índice.
+         */
+        function setupGlobalLeaderboardListener() {
+            if (!db) {
+                console.error("Firestore não inicializado. Não foi possível configurar o listener do ranking.");
+                return;
+            }
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            // Altere a consulta para não usar orderBy() no Firestore, pois isso requer um índice.
+            // Em vez disso, buscaremos os documentos e os ordenaremos no cliente.
+            const q = query(collection(db, `artifacts/${appId}/public/data/leaderboard`)); 
+
+            onSnapshot(q, (snapshot) => {
+                leaderboardList.innerHTML = ''; // Limpa a lista atual
+                if (snapshot.empty) {
+                    leaderboardList.innerHTML = '<li class="text-center text-slate-400">Nenhuma pontuação global ainda. Seja o primeiro!</li>';
+                    return;
                 }
-                leaderboardList.appendChild(listItem);
+
+                let allScores = [];
+                snapshot.docs.forEach((doc) => { // Use snapshot.docs to iterate over documents
+                    allScores.push(doc.data());
+                });
+
+                // Ordena os resultados no cliente por score (descrescente) e depois por timestamp (crescente)
+                allScores.sort((a, b) => {
+                    if (b.score !== a.score) {
+                        return b.score - a.score; // Pontuação mais alta primeiro
+                    }
+                    // Se as pontuações são iguais, ordena pelo timestamp (mais antigo primeiro)
+                    // Converte Firestore Timestamp para milissegundos para comparação
+                    const timestampA = a.timestamp ? a.timestamp.toMillis() : 0;
+                    const timestampB = b.timestamp ? b.timestamp.toMillis() : 0;
+                    return timestampA - timestampB;
+                });
+
+                // Exibe apenas os top 5 jogadores
+                allScores.slice(0, 5).forEach((data, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'text-sm sm:text-base text-slate-300 py-1';
+                    if (index === 0) { // Primeira posição ganha a coroa
+                        listItem.innerHTML = `<span class="text-amber-400">👑</span> ${data.username}: ${Math.round(data.score)}%`;
+                    } else {
+                        listItem.textContent = `${data.username}: ${Math.round(data.score)}%`;
+                    }
+                    leaderboardList.appendChild(listItem);
+                });
+                console.log("Ranking global atualizado!");
+            }, (error) => {
+                console.error("Erro ao ouvir o ranking global: ", error);
+                leaderboardList.innerHTML = '<li class="text-center text-red-400">Erro ao carregar ranking global.</li>';
             });
         }
 
@@ -1133,8 +1170,10 @@
             victoryCylinderFill.style.backgroundColor = overallCombinedScorePercentage >= 60 ? '#FBBE24' : '#EF4444'; // Dourado ou vermelho
             victoryCylinderPercentageText.textContent = `${overallTimeEfficiencyPercentage}%`;
 
-            // Atualiza o ranking com a pontuação do usuário
-            updateLeaderboard(currentUsername, overallCombinedScorePercentage);
+            // Adiciona a pontuação ao Firestore
+            addScoreToFirestoreLeaderboard(currentUsername, overallCombinedScorePercentage);
+            // Re-renderiza o leaderboard (o onSnapshot já fará isso automaticamente)
+            setupGlobalLeaderboardListener(); // Chama para garantir que o listener esteja ativo e atualize.
 
             victoryMusic.src = victoryMusicUrl; // Define a URL da música
             victoryMusic.play().catch(e => console.log("Erro ao tocar música de vitória: ", e)); // Toca a música
@@ -1149,17 +1188,42 @@
                 nextTopicButton.onclick = () => {
                     const nextTopic = uncompletedTopics[0]; // Pega o primeiro tópico não concluído
                     currentQuestionIndex = 0; // Reinicia o índice da pergunta para o novo tópico
-                    startQuiz(nextTopic);
+                    window.startQuiz(nextTopic); // Access through window
                 };
             } else {
                 nextTopicButton.classList.add('hidden'); // Esconde se todos os tópicos estiverem completos
             }
             
-            showScreen('victory-screen');
+            window.showScreen('victory-screen'); // Access through window
         }
         
         // --- INICIALIZAÇÃO DO APLICATIVO ---
-        window.onload = () => {
+        window.onload = async () => {
+            // Variáveis globais do ambiente Canvas
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+            // Inicializa Firebase
+            appFirebase = initializeApp(firebaseConfig);
+            db = getFirestore(appFirebase);
+            auth = getAuth(appFirebase);
+
+            // Autenticação (anônima ou com token fornecido)
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    console.log("Autenticado com token personalizado.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Autenticado anonimamente.");
+                }
+                firebaseUserId = auth.currentUser?.uid; // Armazena o ID do usuário após a autenticação
+            } catch (error) {
+                console.error("Erro na autenticação Firebase:", error);
+                // Exibir mensagem de erro ao usuário, se necessário
+            }
+            
             loadProgress(); // Carrega o progresso salvo
             // Pré-carrega as imagens do quiz para uma experiência mais suave
             preloadImages(quizBackgroundImages); 
@@ -1178,10 +1242,8 @@
                     currentUsername = 'Jogador'; // Define um nome padrão se o campo estiver vazio
                 }
                 saveProgress(); // Salva o nome de usuário (se alterado)
-                showScreen('home-screen'); 
+                window.showScreen('home-screen'); // Access through window
             });
-
-            // O event listener para skipToVictoryButton foi removido
 
             // Adiciona o event listener para o botão "Voltar ao Menu Principal" na tela de vitória
             backToMenuVictoryButton.addEventListener('click', () => {
@@ -1190,7 +1252,7 @@
                     victoryMusic.pause();
                     victoryMusic.currentTime = 0;
                 }
-                showScreen('home-screen');
+                window.showScreen('home-screen'); // Access through window
             });
 
             // Adiciona o event listener para pular o racional
@@ -1200,7 +1262,19 @@
                     advanceQuizAfterRationale();
                 }
             });
+
+            // Inicia o listener do ranking global assim que o Firebase for inicializado e autenticado
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    firebaseUserId = user.uid; // Garante que userId esteja definido
+                    setupGlobalLeaderboardListener(); // Inicia o listener para o ranking
+                }
+            });
         };
+
+        // Make functions globally accessible for HTML onclick attributes
+        window.startQuiz = startQuiz;
+        window.showScreen = showScreen;
     </script>
 </body>
 </html>
