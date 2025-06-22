@@ -8,6 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs - Adicionados globalmente para compatibilidade sem 'type="module"' -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -265,12 +271,7 @@
     </div>
 
 
-    <script type="module">
-        // Importações do Firebase SDK
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+    <script>
         // --- BANCO DE DADOS DAS PERGUNTAS ---
         const quizData = {
             geografia: [
@@ -971,7 +972,7 @@
                 continueButton.onclick = () => { 
                     currentBlockScore = 0; 
                     blockTimings = []; // Reinicia os tempos para o novo bloco
-                    window.startQuiz(currentTopic); // Access through window
+                    startQuiz(currentTopic); 
                 };
                 buttonsContainer.appendChild(continueButton);
             } 
@@ -988,7 +989,7 @@
                 currentBlockScore = 0; // Zera a pontuação do bloco para o novo jogo
                 blockTimings = []; // Zera os tempos para o novo jogo
                 saveProgress();
-                window.startQuiz(currentTopic, true); // Access through window
+                startQuiz(currentTopic, true); 
             };
             buttonsContainer.appendChild(restartButton);
 
@@ -996,10 +997,10 @@
             const homeButton = document.createElement('button');
             homeButton.textContent = 'Voltar ao Menu';
             homeButton.className = 'bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
-            homeButton.onclick = () => window.showScreen('home-screen'); // Access through window
+            homeButton.onclick = () => showScreen('home-screen'); 
             buttonsContainer.appendChild(homeButton);
             
-            window.showScreen('results-screen'); // Access through window
+            showScreen('results-screen'); 
         }
 
         /**
@@ -1017,12 +1018,12 @@
                 // Caminho para a coleção de ranking (pública)
                 // Usando `__app_id` que é um identificador único para sua aplicação no Canvas
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                const leaderboardCollectionRef = collection(db, `artifacts/${appId}/public/data/leaderboard`);
+                const leaderboardCollectionRef = db.collection(`artifacts/${appId}/public/data/leaderboard`);
                 
-                await addDoc(leaderboardCollectionRef, {
+                await leaderboardCollectionRef.add({
                     username: username,
                     score: score,
-                    timestamp: serverTimestamp(), // Adiciona um timestamp para ordenação
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(), // Adiciona um timestamp para ordenação
                     userId: firebaseUserId // Armazena o ID do usuário (anônimo ou não)
                 });
                 console.log('Pontuação adicionada ao Firestore com sucesso!');
@@ -1043,9 +1044,9 @@
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
             // Altere a consulta para não usar orderBy() no Firestore, pois isso requer um índice.
             // Em vez disso, buscaremos os documentos e os ordenaremos no cliente.
-            const q = query(collection(db, `artifacts/${appId}/public/data/leaderboard`)); 
+            const q = db.collection(`artifacts/${appId}/public/data/leaderboard`); 
 
-            onSnapshot(q, (snapshot) => {
+            q.onSnapshot((snapshot) => {
                 leaderboardList.innerHTML = ''; // Limpa a lista atual
                 if (snapshot.empty) {
                     leaderboardList.innerHTML = '<li class="text-center text-slate-400">Nenhuma pontuação global ainda. Seja o primeiro!</li>';
@@ -1188,34 +1189,35 @@
                 nextTopicButton.onclick = () => {
                     const nextTopic = uncompletedTopics[0]; // Pega o primeiro tópico não concluído
                     currentQuestionIndex = 0; // Reinicia o índice da pergunta para o novo tópico
-                    window.startQuiz(nextTopic); // Access through window
+                    startQuiz(nextTopic); 
                 };
             } else {
                 nextTopicButton.classList.add('hidden'); // Esconde se todos os tópicos estiverem completos
             }
             
-            window.showScreen('victory-screen'); // Access through window
+            showScreen('victory-screen'); 
         }
         
         // --- INICIALIZAÇÃO DO APLICATIVO ---
         window.onload = async () => {
             // Variáveis globais do ambiente Canvas
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+            // Configuração do Firebase fornecida pelo ambiente Canvas
+            const firebaseConfig = JSON.parse(__firebase_config);
             const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-            // Inicializa Firebase
-            appFirebase = initializeApp(firebaseConfig);
-            db = getFirestore(appFirebase);
-            auth = getAuth(appFirebase);
+            // Inicializa Firebase (usando a API global)
+            appFirebase = firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore(); // Obtenha a instância do Firestore
+            auth = firebase.auth(); // Obtenha a instância de autenticação
 
             // Autenticação (anônima ou com token fornecido)
             try {
                 if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
+                    await auth.signInWithCustomToken(initialAuthToken);
                     console.log("Autenticado com token personalizado.");
                 } else {
-                    await signInAnonymously(auth);
+                    await auth.signInAnonymously();
                     console.log("Autenticado anonimamente.");
                 }
                 firebaseUserId = auth.currentUser?.uid; // Armazena o ID do usuário após a autenticação
@@ -1242,7 +1244,7 @@
                     currentUsername = 'Jogador'; // Define um nome padrão se o campo estiver vazio
                 }
                 saveProgress(); // Salva o nome de usuário (se alterado)
-                window.showScreen('home-screen'); // Access through window
+                showScreen('home-screen'); 
             });
 
             // Adiciona o event listener para o botão "Voltar ao Menu Principal" na tela de vitória
@@ -1252,7 +1254,7 @@
                     victoryMusic.pause();
                     victoryMusic.currentTime = 0;
                 }
-                window.showScreen('home-screen'); // Access through window
+                showScreen('home-screen'); 
             });
 
             // Adiciona o event listener para pular o racional
@@ -1264,17 +1266,13 @@
             });
 
             // Inicia o listener do ranking global assim que o Firebase for inicializado e autenticado
-            onAuthStateChanged(auth, (user) => {
+            auth.onAuthStateChanged((user) => {
                 if (user) {
                     firebaseUserId = user.uid; // Garante que userId esteja definido
                     setupGlobalLeaderboardListener(); // Inicia o listener para o ranking
                 }
             });
         };
-
-        // Make functions globally accessible for HTML onclick attributes
-        window.startQuiz = startQuiz;
-        window.showScreen = showScreen;
     </script>
 </body>
 </html>
