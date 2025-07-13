@@ -248,7 +248,7 @@
 
             <!-- Novo cilindro de porcentagem na tela de vitória -->
             <div id="victory-cylinder-container" class="w-full max-w-xs mx-auto">
-                <div id="victory-cylinder-fill" class="h-full rounded-2xl transition-all duration-1000 ease-out absolute left-0 top-0"></div>
+                <div id="victory-cylinder-fill" class="h-full rounded-2xl transition-all duration-1000 ease-out absolute left:0 top:0"></div>
                 <span id="victory-cylinder-percentage-text" class="absolute w-full text-center top-1/2 -translate-y-1/2 font-bold text-white z-10"></span>
             </div>
             
@@ -454,55 +454,57 @@
         const victoryMusicUrl = `${GITHUB_PAGES_BASE_URL}Oceanostelafinal.mp3`; 
 
         // URLs das imagens de fundo para as perguntas (seleção aleatória)
-        // Usando um placeholder para a imagem que está falhando no carregamento (404)
+        // Atualizado com a lista fornecida pelo usuário
         const quizBackgroundImages = [
-            `${GITHUB_PAGES_BASE_URL}imagens/Design.png`,
-            'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Quiz+1', // Placeholder para imagem com 404
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_234810260-stock-illustration-biblical-vector-illustration-series-way.png`,
-            'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Quiz+2', // Placeholder para imagem com 404
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_256938844-stock-illustration-jesus-comes-to-jerusalem-as-Picsart-AiImageEnhancer.jpg`,
-            'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Quiz+3', // Placeholder para imagem com 404
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_393585142-stock-illustration-biblical-vector-illustration-jesus-talking-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_666141214-stock-illustration-biblical-figure-illustration-series-moses-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_711506406-stock-illustration-biblical-vector-illustration-series-biblical-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_711506444-stock-illustration-biblical-storytelling-inspired-samuel-moment-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_711506468-stock-illustration-biblical-vector-illustration-series-jesus-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_711506558-stock-illustration-biblicall-vector-illustration-series-woman-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_715837834-stock-illustration-biblical-silhouette-illustration-series-jesus-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_716584466-stock-illustration-biblical-vector-illustration-series-paul-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_716600938-stock-illustration-peter-filled-holy-spirit-acts-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_743336174-stock-illustration-biblical-vector-illustration-series-parable-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_743336248-stock-illustration-biblical-vector-illustration-series-moses-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_743336278-stock-illustration-jesus-prayer-amongst-ancient-olive-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_749091306-stock-illustration-hand-god-protects-blesses-christian-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_749091328-stock-illustration-shining-silhouette-jesus-standing-hill-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_787653916-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701130-stock-illustration-biblical-vector-illustration-series-way.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701142-stock-illustration-biblical-vector-illustration-series-way.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701154-stock-illustration-biblical-vector-illustration-series-way.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701180-stock-illustration-pontius-pilate-washing-his-hands-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701210-stock-illustration-biblical-vector-illustration-way-cross-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701224-stock-illustration-biblical-vector-illustration-series-way.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803702008-stock-illustration-green-economy-concept-scale-businessman-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803702036-stock-illustration-two-hands-raised-prayer-supplication-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199042-stock-illustration-simple-minimalist-biblical-vector-illustration-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199054-stock-illustration-minimalist-biblical-vector-illustration-red-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199062-stock-illustration-biblical-vector-illustration-series-red-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199130-stock-illustration-simple-minimalist-biblical-vector-illustration-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199310-stock-illustration-peter-filled-holy-spirit-acts-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/freepik__enhance__71882.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/freepik__enhance__71883.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/upscalemedia-transformed%20(1).jpeg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/upscalemedia-transformed.jpeg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/vida.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/videirae.png`
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus1.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus10.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus11.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus12.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus13.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus14.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus15.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus16.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus17.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus18.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus19.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus2.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus20.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus21.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus22.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus23.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus24.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus25.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus26.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus27.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus28.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus29.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus3.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus30.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus31.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus32.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus33.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus34.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus35.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus36.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus37.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus38.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus39.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus4.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus40.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus41.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus5.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus6.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus7.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus8.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/jesus9.png`
         ];
 
         // Imagens específicas para a tela de vitória por tópico
+        // Mantendo as imagens específicas para os tópicos, se existirem na nova lista, ou usando uma genérica
         const victoryTopicBackgroundImages = {
-            geografia: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_225457748-stock-illustration-biblical-vector-illustration-series-jesus.png`,
-            pessoas: 'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Pessoas', // Placeholder para imagem com 404
-            eventos: 'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Eventos' // Placeholder para imagem com 404
+            geografia: `${GITHUB_PAGES_BASE_URL}imagens/jesus1.png`, // Exemplo: Usando jesus1.png para geografia
+            pessoas: `${GITHUB_PAGES_BASE_URL}imagens/jesus10.png`, // Exemplo: Usando jesus10.png para pessoas
+            eventos: `${GITHUB_PAGES_BASE_URL}imagens/jesus20.png`  // Exemplo: Usando jesus20.png para eventos
         };
 
         // Sons para feedback (acerto, erro, bloco completo, vitória)
