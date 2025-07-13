@@ -348,7 +348,6 @@
             eventos: [
                 // Bloco 1
                 { question: "Qual evento marcou o início do ministério público de Jesus?", answers: ["A Transfiguração", "A Tentação no Deserto", "Seu Batismo", "A Última Ceia"], correct: 2, rationale: "O batismo de Jesus por João Batista no Rio Jordão, um evento que marcou o início de seu ministério público." },
-                { question: "Qual foi a primeira praga enviada ao Egito?", answers: ["Gafanhotos", "Trevas", "Morte dos primogênitos", "Água em sangue"], correct: 3, rationale: "A primeira praga que Deus enviou ao Egito foi a transformação de toda a água em sangue, um julgamento contra os deuses egípcios." },
                 { question: "O que os israelitas estavam fazendo quando Moisés desceu do Monte Sinai com os Dez Mandamentos?", answers: ["Orando", "Adorando um bezerro de ouro", "Construindo o tabernáculo", "Descansando"], correct: 1, rationale: "Enquanto Moisés recebia os mandamentos, os israelitas, impacientes, fizeram um bezerro de ouro para adorar, o que provocou a ira de Deus." },
                 { question: "Qual evento é comemorado na Páscoa judaica?", answers: ["A criação do mundo", "A entrega da Lei", "A libertação do Egito", "A conquista de Canaã"], correct: 2, rationale: "A Páscoa judaica comemora a libertação milagrosa dos israelitas da escravidão no Egito, um evento central na história judaica." },
                 { question: "O que aconteceu no dia de Pentecostes, registrado no livro de Atos?", answers: ["A ascensão de Jesus", "A ressurreição de Lázaro", "O derramamento do Espírito Santo", "A conversão de Paulo"], correct: 2, rationale: "No dia de Pentecostes, o Espírito Santo foi derramado sobre os discípulos, capacitando-os a pregar o evangelho em diferentes línguas, como registrado em Atos 2." },
@@ -804,14 +803,12 @@
                 // Precisamos determinar se o usuário concluiu com sucesso o bloco anterior
                 // ou se ele precisa tentar novamente o último bloco incompleto/falho.
                 const lastCompletedQuestions = progress[topic].completedQuestions;
-                const startOfLastBlock = Math.floor(lastCompletedQuestions / questionsPerBlock) * questionsPerBlock;
-
-                // Se o tópico não está completo E as últimas perguntas concluídas não estão em um limite de bloco,
-                // significa que o usuário estava no meio de um bloco ou falhou o último bloco que jogou.
-                // Neste caso, força-o a voltar para o início desse bloco.
+                
+                // Se o tópico não está completo E o número de perguntas completadas não é um múltiplo de questionsPerBlock,
+                // significa que o último bloco não foi concluído com sucesso.
                 if (!progress[topic].isCompleted && (lastCompletedQuestions % questionsPerBlock !== 0)) {
-                    currentQuestionIndex = startOfLastBlock;
-                    console.log(`Ação: Bloco incompleto/falho detectado para o tópico ${topic}. Forçando o reinício do bloco no índice ${currentQuestionIndex}.`);
+                    currentQuestionIndex = Math.floor(lastCompletedQuestions / questionsPerBlock) * questionsPerBlock;
+                    console.log(`Ação: Bloco anterior não concluído com sucesso. Forçando o reinício do bloco no índice ${currentQuestionIndex}.`);
                 } else {
                     // Caso contrário, inicia no índice da última pergunta concluída registrada (que deve ser um limite de bloco se bem-sucedido)
                     currentQuestionIndex = lastCompletedQuestions;
