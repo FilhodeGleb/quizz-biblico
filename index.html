@@ -37,7 +37,7 @@
         /* Estilo para a tela de carregamento inicial com a imagem de fundo exclusiva */
         .background-initial {
             /* URL da imagem de fundo da tela inicial apontando para o GitHub Pages */
-            background-image: url('https://filhodegleb.github.io/quizz-biblico/imagens/depositphotos_818199042-stock-illustration-simple-minimalist-biblical-vector-illustration-Picsart-AiImageEnhancer.jpg');
+            background-image: url('https://filhodegleb.github.io/quizz-biblico/imagens/jesus1.png'); /* Updated to use one of your new images */
             background-size: cover;
             background-position: center;
         }
@@ -145,8 +145,8 @@
     <div id="initial-load-screen" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-900 background-initial">
         <h1 class="text-4xl font-bold mb-6 text-white text-shadow animate-pulse text-center">Quiz Bíblico</h1>
         <div class="glassmorphism p-6 sm:p-8 rounded-xl shadow-2xl text-center">
-            <h2 class="text-2xl font-bold mb-4">Insira seu Nome</h2>
-            <input type="text" id="username-input" placeholder="Seu nome de jogador" class="w-full p-3 mb-4 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <h2 class="text-2xl font-bold mb-4">Bem-vindo ao Quiz Bíblico!</h2>
+            <!-- Removido o input de nome de usuário -->
             <button id="start-app-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl shadow-lg transition-all duration-300 transform hover:scale-105">
                 Iniciar Quiz
             </button>
@@ -167,7 +167,7 @@
                 </div>
                 <div>
                     <p id="progress-geografia" class="text-base sm:text-lg mb-4 font-semibold">0/30</p>
-                    <button onclick="startQuiz('geografia')" class="bg-cyan-600 hover:bg-cyan-700 w-full text-white font-bold py-2 px-4 rounded-lg text-base">Jogar</button>
+                    <button id="btn-geografia" class="bg-cyan-600 hover:bg-cyan-700 w-full text-white font-bold py-2 px-4 rounded-lg text-base">Jogar</button>
                 </div>
             </div>
 
@@ -179,7 +179,7 @@
                 </div>
                 <div>
                     <p id="progress-pessoas" class="text-base sm:text-lg mb-4 font-semibold">0/30</p>
-                    <button onclick="startQuiz('pessoas')" class="bg-rose-600 hover:bg-rose-700 w-full text-white font-bold py-2 px-4 rounded-lg text-base">Jogar</button>
+                    <button id="btn-pessoas" class="bg-rose-600 hover:bg-rose-700 w-full text-white font-bold py-2 px-4 rounded-lg text-base">Jogar</button>
                 </div>
             </div>
 
@@ -191,7 +191,7 @@
                 </div>
                 <div>
                     <p id="progress-eventos" class="text-base sm:text-lg mb-4 font-semibold">0/30</p>
-                    <button onclick="startQuiz('eventos')" class="bg-lime-600 hover:bg-lime-700 w-full text-white font-bold py-2 px-4 rounded-lg text-base">Jogar</button>
+                    <button id="btn-eventos" class="bg-lime-600 hover:bg-lime-700 w-full text-white font-bold py-2 px-4 rounded-lg text-base">Jogar</button>
                 </div>
             </div>
         </div>
@@ -258,6 +258,7 @@
 
             <!-- Container para botões -->
             <div class="flex flex-col sm:flex-row justify-center items-center w-full mt-8 gap-3">
+                <button id="play-again-topic-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">Jogar Novamente Este Tópico</button>
                 <button id="next-topic-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">Próximo Tópico</button>
                 <button id="back-to-menu-victory" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">Voltar ao Menu Principal</button>
             </div>
@@ -386,9 +387,10 @@
         let currentQuestionIndex = 0;
         let currentBlockScore = 0; // Pontuação do bloco atual
         let blockTimings = []; // Armazena o tempo gasto em cada questão do bloco atual
-        let currentUsername = 'Jogador'; // Nome de usuário padrão
+        let currentUsername = 'Jogador'; // Nome de usuário padrão (não mais solicitado ao usuário)
         let rationaleAdvanceTimeoutId; // ID do setTimeout para o avanço do racional
         const ACCURACY_THRESHOLD = 50; // Limiar de precisão para considerar o tempo (50%)
+        let questionsAnsweredInRedTime = 0; // Novo contador para perguntas com tempo no vermelho
 
         // Objeto para armazenar o progresso em cada tópico
         // Agora inclui totalScore e totalTimeTaken para cálculos gerais
@@ -409,7 +411,7 @@
 
         // Elementos da interface (cache de referências DOM para performance)
         const initialLoadScreen = document.getElementById('initial-load-screen');
-        const usernameInput = document.getElementById('username-input'); // Novo input de username
+        // const usernameInput = document.getElementById('username-input'); // Removido o input de username
         const startAppButton = document.getElementById('start-app-button');
         const homeScreen = document.getElementById('home-screen');
         const quizScreen = document.getElementById('quiz-screen');
@@ -429,6 +431,7 @@
         const overallScoreText = document.getElementById('overall-score-text');
         const backToMenuVictoryButton = document.getElementById('back-to-menu-victory');
         const nextTopicButton = document.getElementById('next-topic-button'); // Novo botão Próximo Tópico
+        const playAgainTopicButton = document.getElementById('play-again-topic-button'); // Novo botão Jogar Novamente Este Tópico
 
         const quizContainer = document.getElementById('quiz-container'); // Referência para o container do quiz
         const questionTextElement = document.getElementById('question-text');
@@ -454,7 +457,7 @@
         const victoryMusicUrl = `${GITHUB_PAGES_BASE_URL}Oceanostelafinal.mp3`; 
 
         // URLs das imagens de fundo para as perguntas (seleção aleatória)
-        // Atualizado com a lista fornecida pelo usuário
+        // Atualizado com a lista fornecida pelo usuário, removendo duplicatas e garantindo apenas os novos caminhos
         const quizBackgroundImages = [
             `${GITHUB_PAGES_BASE_URL}imagens/jesus1.png`,
             `${GITHUB_PAGES_BASE_URL}imagens/jesus10.png`,
@@ -500,11 +503,11 @@
         ];
 
         // Imagens específicas para a tela de vitória por tópico
-        // Mantendo as imagens específicas para os tópicos, se existirem na nova lista, ou usando uma genérica
+        // Atualizado para usar imagens da sua nova lista
         const victoryTopicBackgroundImages = {
-            geografia: `${GITHUB_PAGES_BASE_URL}imagens/jesus1.png`, // Exemplo: Usando jesus1.png para geografia
-            pessoas: `${GITHUB_PAGES_BASE_URL}imagens/jesus10.png`, // Exemplo: Usando jesus10.png para pessoas
-            eventos: `${GITHUB_PAGES_BASE_URL}imagens/jesus20.png`  // Exemplo: Usando jesus20.png para eventos
+            geografia: `${GITHUB_PAGES_BASE_URL}imagens/jesus1.png`, 
+            pessoas: `${GITHUB_PAGES_BASE_URL}imagens/jesus10.png`, 
+            eventos: `${GITHUB_PAGES_BASE_URL}imagens/jesus20.png` 
         };
 
         // Sons para feedback (acerto, erro, bloco completo, vitória)
@@ -546,7 +549,7 @@
 
             // Define um intervalo para atualizar a largura da barra e a cor
             timerColorChangeInterval = setInterval(() => {
-                let now = Date.now();
+                let now = Date.now(); 
                 let remainingTimeMs = endTime - now;
 
                 if (remainingTimeMs <= 0) {
@@ -582,6 +585,11 @@
             const timeTaken = timerDuration * 1000; // Tempo total esgotado (15 segundos)
             blockTimings.push(timeTaken); // Adiciona o tempo à lista do bloco
 
+            // Incrementa o contador se o tempo esgotou e a barra ficou vermelha
+            if (timeBar.style.backgroundColor === 'red') {
+                questionsAnsweredInRedTime++;
+            }
+
             feedbackMessage.textContent = "Tempo esgotado! Clique para continuar.";
             feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-red-300";
             
@@ -604,14 +612,17 @@
             questionTextElement.classList.add('hidden');
             answerOptionsElement.classList.add('hidden');
             timeBarContainer.classList.add('hidden');
-            feedbackMessage.classList.remove('hidden'); // Garante que o feedback seja visível
-            rationaleText.classList.remove('hidden'); // Garante que o racional seja visível
-            displayRationale(questionData.rationale); // Exibe o racional
+            feedbackMessage.classList.remove('hidden');
+            feedbackMessage.style.display = 'block'; // Força a exibição
+            rationaleText.classList.remove('hidden');
+            rationaleText.style.display = 'block';   // Força a exibição
+            displayRationale(questionData.rationale);
 
-            // DEBUG LOGS para o racional
-            console.log("Racional deve estar visível agora.");
-            console.log("Status do racional (hidden class):", rationaleText.classList.contains('hidden'));
-            console.log("Conteúdo do racional:", rationaleText.innerHTML);
+            console.log("handleTimeout: Racional deve estar visível agora.");
+            console.log("handleTimeout: Feedback hidden?", feedbackMessage.classList.contains('hidden'), "Rationale hidden?", rationaleText.classList.contains('hidden'));
+            console.log("handleTimeout: Feedback display:", feedbackMessage.style.display, "Rationale display:", rationaleText.style.display);
+            console.log("handleTimeout: Conteúdo do racional:", rationaleText.innerHTML);
+            console.log("handleTimeout: Perguntas com tempo no vermelho:", questionsAnsweredInRedTime);
 
             // Removido o setTimeout para avanço automático. O avanço agora é apenas por clique no container.
         }
@@ -627,10 +638,11 @@
             // Lógica para avançar ou mostrar resultados
             if (currentQuestionIndex % questionsPerBlock === 0 || currentQuestionIndex >= quizData[currentTopic].length) {
                 // Atualiza o progresso do tópico com os dados do bloco atual
-                progress[currentTopic].completedQuestions = currentQuestionIndex;
-                progress[currentTopic].totalScore += currentBlockScore; // Adiciona a pontuação do bloco ao total
+                // A atualização de progress.completedQuestions é feita em showResults, condicionalmente.
+                // Apenas adiciona a pontuação e tempo ao total do tópico aqui, independentemente do sucesso do bloco.
+                progress[currentTopic].totalScore += currentBlockScore;
                 const currentBlockTimeTakenMs = blockTimings.reduce((sum, time) => sum + time, 0);
-                progress[currentTopic].totalTimeTaken += currentBlockTimeTakenMs; // Adiciona o tempo do bloco ao total
+                progress[currentTopic].totalTimeTaken += currentBlockTimeTakenMs;
                 
                 if (currentQuestionIndex >= totalQuestionsPerTopic) { 
                     progress[currentTopic].isCompleted = true; // Marca o tópico como completo
@@ -717,11 +729,6 @@
                     }
                 }
             }
-            const savedUsername = localStorage.getItem('quizBiblicoUsername');
-            if (savedUsername) {
-                currentUsername = savedUsername;
-                usernameInput.value = currentUsername;
-            }
         }
         
         /**
@@ -729,7 +736,6 @@
          */
         function saveProgress() {
             localStorage.setItem('quizBiblicoProgress', JSON.stringify(progress));
-            localStorage.setItem('quizBiblicoUsername', currentUsername);
         }
 
         /**
@@ -738,8 +744,28 @@
         function updateProgressDisplay() {
             for (const topic in progress) {
                 const progressElement = document.getElementById(`progress-${topic}`);
+                const buttonElement = document.getElementById(`btn-${topic}`); // Obtém o botão específico do tópico
+                
                 if(progressElement) {
                     progressElement.textContent = `${progress[topic].completedQuestions || 0}/${totalQuestionsPerTopic}`;
+                }
+
+                if (buttonElement) {
+                    if (progress[topic].isCompleted) {
+                        buttonElement.textContent = 'Jogar Novamente';
+                        buttonElement.onclick = () => startQuiz(topic, false, true); // Reinicia o tópico
+                        // Você pode adicionar uma classe diferente para o botão de "Jogar Novamente" se quiser um estilo diferente
+                        buttonElement.classList.remove('bg-cyan-600', 'bg-rose-600', 'bg-lime-600');
+                        buttonElement.classList.add('bg-purple-600'); // Exemplo: cor roxa para "Jogar Novamente"
+                    } else {
+                        buttonElement.textContent = 'Jogar';
+                        buttonElement.onclick = () => startQuiz(topic); // Comportamento padrão de iniciar
+                        // Garante que as classes de cor originais sejam aplicadas
+                        buttonElement.classList.remove('bg-purple-600');
+                        if (topic === 'geografia') buttonElement.classList.add('bg-cyan-600');
+                        if (topic === 'pessoas') buttonElement.classList.add('bg-rose-600');
+                        if (topic === 'eventos') buttonElement.classList.add('bg-lime-600');
+                    }
                 }
             }
         }
@@ -748,43 +774,66 @@
          * Inicia o quiz para um tópico específico.
          * @param {string} topic - O tópico do quiz a ser iniciado ('geografia', 'pessoas', 'eventos').
          * @param {boolean} restartBlock - Se true, reinicia o bloco atual.
+         * @param {boolean} resetTopic - Se true, reinicia o tópico completo (pontuação e progresso).
          */
-        function startQuiz(topic, restartBlock = false) {
+        function startQuiz(topic, restartBlock = false, resetTopic = false) {
             currentTopic = topic;
-            currentBlockScore = 0; // Sempre zera a pontuação do bloco ao iniciar um novo bloco ou reiniciar
-            blockTimings = []; // Sempre zera os tempos do bloco
+            currentBlockScore = 0; // Reset para a tentativa do bloco atual
+            blockTimings = []; // Reset para a tentativa do bloco atual
+            questionsAnsweredInRedTime = 0; // Reset para a tentativa do bloco atual
 
-            if (restartBlock) {
-                // Calcula o índice inicial do bloco atual
-                currentQuestionIndex = Math.floor(currentQuestionIndex / questionsPerBlock) * questionsPerBlock;
-            } else {
-                currentQuestionIndex = progress[topic].completedQuestions || 0;
-            }
-            
-            // Importante: A pontuação total para a tela de vitória será calculada somando os 'totalScore' de cada tópico no objeto 'progress'.
-            // Para garantir que a pontuação acumulada para a tela de vitória seja precisa,
-            // vamos zerar 'totalScore' e 'totalTimeTaken' de um tópico apenas quando ele for iniciado do '0'
-            // (ou seja, quando `currentQuestionIndex` for 0).
-            if (currentQuestionIndex === 0 && !restartBlock) {
+            console.log(`--- startQuiz chamado para o tópico: ${topic} ---`);
+            console.log(`currentQuestionIndex (global) inicial: ${currentQuestionIndex}`);
+            console.log(`progress[${topic}].completedQuestions inicial: ${progress[topic].completedQuestions}`);
+            console.log(`resetTopic: ${resetTopic}, restartBlock: ${restartBlock}`);
+
+            if (resetTopic) {
+                // Reset completo para o tópico
+                progress[currentTopic].completedQuestions = 0;
                 progress[currentTopic].totalScore = 0;
                 progress[currentTopic].totalTimeTaken = 0;
+                progress[currentTopic].isCompleted = false;
+                currentQuestionIndex = 0;
+                console.log(`Ação: Reset completo. currentQuestionIndex definido como 0.`);
+            } else if (restartBlock) {
+                // Reiniciando explicitamente o bloco atual (ex: pelo botão "Reiniciar Bloco")
+                currentQuestionIndex = Math.floor(currentQuestionIndex / questionsPerBlock) * questionsPerBlock;
+                console.log(`Ação: Reinício explícito do bloco. currentQuestionIndex definido como ${currentQuestionIndex}.`);
+            } else {
+                // Este caminho é acionado quando "Jogar" é clicado na tela inicial.
+                // Precisamos determinar se o usuário concluiu com sucesso o bloco anterior
+                // ou se ele precisa tentar novamente o último bloco incompleto/falho.
+                const lastCompletedQuestions = progress[topic].completedQuestions;
+                const startOfLastBlock = Math.floor(lastCompletedQuestions / questionsPerBlock) * questionsPerBlock;
+
+                // Se o tópico não está completo E as últimas perguntas concluídas não estão em um limite de bloco,
+                // significa que o usuário estava no meio de um bloco ou falhou o último bloco que jogou.
+                // Neste caso, força-o a voltar para o início desse bloco.
+                if (!progress[topic].isCompleted && (lastCompletedQuestions % questionsPerBlock !== 0)) {
+                    currentQuestionIndex = startOfLastBlock;
+                    console.log(`Ação: Bloco incompleto/falho detectado para o tópico ${topic}. Forçando o reinício do bloco no índice ${currentQuestionIndex}.`);
+                } else {
+                    // Caso contrário, inicia no índice da última pergunta concluída registrada (que deve ser um limite de bloco se bem-sucedido)
+                    currentQuestionIndex = lastCompletedQuestions;
+                    console.log(`Ação: Iniciando no índice de perguntas concluídas ${currentQuestionIndex} para o tópico ${topic}.`);
+                }
             }
 
-
-            // Verifica se o tópico já foi concluído
-            if (!restartBlock && currentQuestionIndex >= totalQuestionsPerTopic) {
+            // Verifica se o tópico já está completo (todas as 30 perguntas)
+            if (!resetTopic && currentQuestionIndex >= totalQuestionsPerTopic) {
                 const feedbackMessage = document.getElementById('feedback-message-home');
                 if (feedbackMessage) {
-                    feedbackMessage.textContent = "Você já completou este tópico!";
+                    feedbackMessage.textContent = "Você já completou este tópico! Clique 'Jogar Novamente' para reiniciar.";
                     feedbackMessage.className = "text-center text-red-400 mt-4";
                     setTimeout(() => feedbackMessage.textContent = '', 3000);
                 }
+                console.log(`startQuiz: Tópico ${topic} já concluído, não resetando. Retornando.`);
                 return;
             }
 
-            // A imagem de fundo será definida em displayQuestion() para que mude a cada pergunta
-            displayQuestion(); 
-            showScreen('quiz-screen'); 
+            console.log(`currentQuestionIndex final antes de displayQuestion: ${currentQuestionIndex}`);
+            displayQuestion();
+            showScreen('quiz-screen');
         }
 
         /**
@@ -804,7 +853,12 @@
             // Limpa estados anteriores
             feedbackMessage.innerHTML = ''; 
             rationaleText.innerHTML = ''; 
-            answerOptionsElement.innerHTML = ''; 
+
+            // Garante que feedback e rationale estejam ocultos no início de uma nova pergunta
+            feedbackMessage.classList.add('hidden');
+            feedbackMessage.style.display = 'none';
+            rationaleText.classList.add('hidden');
+            rationaleText.style.display = 'none';
 
             stopTimer(); // Para qualquer timer anterior
 
@@ -824,20 +878,32 @@
             questionTextElement.classList.remove('hidden');
             answerOptionsElement.classList.remove('hidden');
             timeBarContainer.classList.remove('hidden');
-            feedbackMessage.classList.add('hidden'); // Garante que o feedback esteja oculto no início de uma nova pergunta
-            rationaleText.classList.add('hidden'); // Garante que o racional esteja oculto no início de uma nova pergunta
-
+            
             document.getElementById('progress-text').textContent = `Pergunta ${ (currentQuestionIndex % questionsPerBlock) + 1 } de ${questionsPerBlock}`;
             questionTextElement.textContent = questionData.question;
             
+            console.log("displayQuestion: Antes de limpar, número de opções existentes:", answerOptionsElement.children.length);
+            // Clear previous answer options explicitly
+            while (answerOptionsElement.firstChild) {
+                answerOptionsElement.removeChild(answerOptionsElement.firstChild);
+            }
+            console.log("displayQuestion: Depois de limpar, número de opções existentes:", answerOptionsElement.children.length);
+
             questionData.answers.forEach((answer, index) => {
                 const button = document.createElement('button');
                 button.textContent = answer;
                 button.className = 'w-full text-left p-3 sm:p-4 rounded-lg glassmorphism hover:bg-white/10 transition-all text-base sm:text-lg';
                 button.dataset.answerIndex = index;
-                button.onclick = () => handleAnswer(index);
+                button.onclick = (event) => handleAnswer(index, event); // Passa o objeto event
                 answerOptionsElement.appendChild(button);
             });
+
+            console.log("displayQuestion: Iniciando nova pergunta. Escondendo feedback e rationale.");
+            console.log("displayQuestion: Feedback hidden?", feedbackMessage.classList.contains('hidden'), "Rationale hidden?", rationaleText.classList.contains('hidden'));
+            console.log("displayQuestion: Feedback display:", feedbackMessage.style.display, "Rationale display:", rationaleText.style.display);
+            console.log("displayQuestion: Número de opções de resposta esperadas:", questionData.answers.length);
+            console.log("displayQuestion: Número de opções de resposta criadas:", answerOptionsElement.children.length);
+
 
             startTimer(); // Inicia o timer para a pergunta
         }
@@ -845,11 +911,18 @@
         /**
          * Lida com a resposta do usuário para uma pergunta.
          * @param {number} selectedIndex - O índice da opção de resposta selecionada pelo usuário.
+         * @param {Event} event - O objeto do evento de clique.
          */
-        function handleAnswer(selectedIndex) {
+        function handleAnswer(selectedIndex, event) {
+            event.stopPropagation(); // Impede que o clique se propague para o quizContainer
             stopTimer(); // Para o timer imediatamente ao responder
             const timeTaken = Date.now() - startTimeQuestion; // Calcula o tempo gasto
             blockTimings.push(timeTaken); // Adiciona o tempo à lista do bloco
+
+            // Incrementa o contador se o tempo esgotou e a barra ficou vermelha
+            if (timeBar.style.backgroundColor === 'red') {
+                questionsAnsweredInRedTime++;
+            }
 
             const questionData = quizData[currentTopic][currentQuestionIndex];
             const isCorrect = selectedIndex === questionData.correct;
@@ -888,14 +961,18 @@
             questionTextElement.classList.add('hidden');
             answerOptionsElement.classList.add('hidden');
             timeBarContainer.classList.add('hidden');
-            feedbackMessage.classList.remove('hidden'); // Garante que o feedback seja visível
-            rationaleText.classList.remove('hidden'); // Garante que o racional seja visível
-            displayRationale(questionData.rationale); // Exibe o racional para todas as situações
             
-            // DEBUG LOGS para o racional
-            console.log("Racional deve estar visível agora.");
-            console.log("Status do racional (hidden class):", rationaleText.classList.contains('hidden'));
-            console.log("Conteúdo do racional:", rationaleText.innerHTML);
+            feedbackMessage.classList.remove('hidden');
+            feedbackMessage.style.display = 'block'; // Força a exibição
+            rationaleText.classList.remove('hidden');
+            rationaleText.style.display = 'block';   // Força a exibição
+            displayRationale(questionData.rationale);
+            
+            console.log("handleAnswer: Resposta selecionada. Processando feedback e rationale.");
+            console.log("handleAnswer: Feedback hidden?", feedbackMessage.classList.contains('hidden'), "Rationale hidden?", rationaleText.classList.contains('hidden'));
+            console.log("handleAnswer: Feedback display:", feedbackMessage.style.display, "Rationale display:", rationaleText.style.display);
+            console.log("handleAnswer: Conteúdo do racional:", rationaleText.innerHTML);
+            console.log("handleAnswer: Perguntas com tempo no vermelho:", questionsAnsweredInRedTime);
 
             // Removido o setTimeout para avanço automático. O avanço agora é apenas por clique no container.
         }
@@ -904,6 +981,11 @@
          * Exibe a tela de resultados após a conclusão de um bloco de perguntas.
          */
         function showResults() {
+            console.log(`--- showResults chamado ---`);
+            console.log(`currentQuestionIndex no início de showResults: ${currentQuestionIndex}`);
+            console.log(`currentBlockScore: ${currentBlockScore}`);
+            console.log(`questionsAnsweredInRedTime: ${questionsAnsweredInRedTime}`);
+
             document.getElementById('results-text').textContent = `Você acertou ${currentBlockScore} de ${questionsPerBlock} perguntas.` ;
 
             // Cálculo da porcentagem de acertos para o BLOCO ATUAL
@@ -917,29 +999,56 @@
 
             timePercentageText.textContent = `Tempo: ${timeEfficiencyPercentageBlock}%`;
 
-            let combinedScorePercentageBlock;
-            // Se a precisão for menor que o limiar, o tempo não conta para a pontuação combinada
-            if (correctAnswersPercentageBlock < ACCURACY_THRESHOLD) {
-                combinedScorePercentageBlock = correctAnswersPercentageBlock; // Tempo não é considerado
-                blockFeedbackMessage.textContent = "Sua precisão foi um pouco baixa neste bloco. Foco na resposta correta antes da velocidade!";
-                blockFeedbackMessage.classList.remove('text-green-400'); // Garante que a classe verde seja removida
+            // Calcular a porcentagem de perguntas com tempo no vermelho
+            const percentageQuestionsInRed = (questionsAnsweredInRedTime / questionsPerBlock) * 100;
+
+            let canProceedToNextBlock = true;
+            let feedbackMessageText = "";
+
+            if (correctAnswersPercentageBlock < 70) {
+                canProceedToNextBlock = false;
+                feedbackMessageText = "Você precisa acertar pelo menos 70% das perguntas para avançar. Tente novamente!";
+                blockFeedbackMessage.classList.remove('text-green-400');
+                blockFeedbackMessage.classList.add('text-red-400');
+            } else if (percentageQuestionsInRed >= 50) { // 50% ou mais das perguntas no vermelho
+                canProceedToNextBlock = false;
+                feedbackMessageText = "Você demorou demais em muitas perguntas. Tente ser mais rápido para avançar!";
+                blockFeedbackMessage.classList.remove('text-green-400');
                 blockFeedbackMessage.classList.add('text-red-400');
             } else {
-                combinedScorePercentageBlock = (correctAnswersPercentageBlock + timeEfficiencyPercentageBlock) / 2;
-                blockFeedbackMessage.textContent = "Excelente! Você está no caminho certo. Vamos para o próximo bloco!";
-                blockFeedbackMessage.classList.remove('text-red-400'); // Garante que a classe vermelha seja removida
+                feedbackMessageText = "Excelente! Você está no caminho certo. Vamos para o próximo bloco!";
+                blockFeedbackMessage.classList.remove('text-red-400');
                 blockFeedbackMessage.classList.add('text-green-400');
             }
+            blockFeedbackMessage.textContent = feedbackMessageText;
+
+            // Atualiza a pontuação total e o tempo total gasto para o tópico, independentemente do sucesso do bloco.
+            progress[currentTopic].totalScore += currentBlockScore;
+            const currentBlockTimeTakenMs = blockTimings.reduce((sum, time) => sum + time, 0);
+            progress[currentTopic].totalTimeTaken += currentBlockTimeTakenMs;
+            console.log(`showResults: progress[${currentTopic}].totalScore após adicionar pontuação do bloco: ${progress[currentTopic].totalScore}`);
+            console.log(`showResults: progress[${currentTopic}].totalTimeTaken após adicionar tempo do bloco: ${progress[currentTopic].totalTimeTaken}`);
+
+
+            if (canProceedToNextBlock) {
+                // SOMENTE atualiza completedQuestions se o bloco foi passado com sucesso
+                progress[currentTopic].completedQuestions = currentQuestionIndex;
+                console.log(`showResults: Bloco aprovado. progress[${currentTopic}].completedQuestions atualizado para ${progress[currentTopic].completedQuestions}`);
+            } else {
+                console.log(`showResults: Bloco falhou. progress[${currentTopic}].completedQuestions permanece em ${progress[currentTopic].completedQuestions}`);
+            }
+            saveProgress(); // Sempre salva o progresso após uma tentativa de bloco
+            console.log(`showResults: Progresso salvo. progress[${currentTopic}].completedQuestions atual no localStorage: ${JSON.parse(localStorage.getItem('quizBiblicoProgress'))[currentTopic].completedQuestions}`);
 
             // Determinar o número de estrelas preenchidas para o BLOCO ATUAL
             let filledStarsBlock = 0;
-            if (combinedScorePercentageBlock >= 80) {
+            if (correctAnswersPercentageBlock >= 80 && percentageQuestionsInRed < 50) { // Considera tempo para 5 estrelas
                 filledStarsBlock = 5;
-            } else if (combinedScorePercentageBlock >= 60) {
+            } else if (correctAnswersPercentageBlock >= 60 && percentageQuestionsInRed < 50) {
                 filledStarsBlock = 4;
-            } else if (combinedScorePercentageBlock >= 40) {
+            } else if (correctAnswersPercentageBlock >= 40) {
                 filledStarsBlock = 3;
-            } else if (combinedScorePercentageBlock >= 20) {
+            } else if (correctAnswersPercentageBlock >= 20) {
                 filledStarsBlock = 2;
             } else {
                 filledStarsBlock = 1;
@@ -948,7 +1057,7 @@
             // Renderização das estrelas para o BLOCO ATUAL
             starRatingContainer.innerHTML = ''; // Limpa estrelas anteriores
             // A cor das estrelas é baseada no combinedScorePercentageBlock
-            const starColorClassBlock = combinedScorePercentageBlock >= 60 ? 'text-amber-400' : 'text-red-500'; // Dourado se >=60%, vermelho caso contrário
+            const starColorClassBlock = canProceedToNextBlock ? 'text-amber-400' : 'text-red-500'; // Dourado se puder avançar, vermelho caso contrário
 
             for (let i = 0; i < 5; i++) {
                 const starWrapper = document.createElement('span');
@@ -974,43 +1083,48 @@
 
             // Atualiza o cilindro de porcentagem para o BLOCO ATUAL
             cylinderFill.style.width = `${timeEfficiencyPercentageBlock}%`;
-            cylinderFill.style.backgroundColor = combinedScorePercentageBlock >= 60 ? '#FBBE24' : '#EF4444'; // Dourado ou vermelho
+            cylinderFill.style.backgroundColor = canProceedToNextBlock ? '#FBBE24' : '#EF4444'; // Dourado ou vermelho
             cylinderPercentageText.textContent = `${timeEfficiencyPercentageBlock}%`; // Exibe a porcentagem dentro do cilindro
             
             const buttonsContainer = document.getElementById('results-buttons');
             buttonsContainer.innerHTML = ''; // Limpa os botões anteriores
             
-            // Adiciona o botão "Próximo Bloco" se houver mais perguntas no tópico
-            if(currentQuestionIndex < totalQuestionsPerTopic) {
+            // Adiciona o botão "Próximo Bloco" se houver mais perguntas no tópico E puder avançar
+            if(canProceedToNextBlock && currentQuestionIndex < totalQuestionsPerTopic) {
                 const continueButton = document.createElement('button');
                 continueButton.textContent = 'Próximo Bloco';
                 continueButton.className = 'bg-green-600 hover:bg-green-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
                 // Ao ir para o próximo bloco, zera a pontuação do bloco atual para o próximo ciclo
                 continueButton.onclick = () => { 
                     currentBlockScore = 0; 
-                    blockTimings = []; // Reinicia os tempos para o novo bloco
+                    blockTimings = []; 
+                    questionsAnsweredInRedTime = 0; // Reset para o próximo bloco
                     startQuiz(currentTopic); 
                 };
                 buttonsContainer.appendChild(continueButton);
             } 
 
-            // Botão para reiniciar o bloco atual
+            // Botão para reiniciar o bloco atual (sempre presente)
             const restartButton = document.createElement('button');
             restartButton.textContent = 'Reiniciar Bloco';
             restartButton.className = 'bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
             restartButton.onclick = () => {
-                // Desfaz a pontuação e tempo do bloco que acabou de ser jogado
+                // Desfaz a pontuação e tempo do bloco que acabou de ser jogado (se não passou)
+                // Se o bloco não foi passado, a pontuação e o tempo já foram adicionados ao total do tópico,
+                // então precisamos subtraí-los para que a nova tentativa não os duplique.
                 progress[currentTopic].totalScore -= currentBlockScore;
                 const blockTimeUndo = blockTimings.reduce((sum, time) => sum + time, 0);
                 progress[currentTopic].totalTimeTaken -= blockTimeUndo;
+                
                 currentBlockScore = 0; // Zera a pontuação do bloco para o novo jogo
                 blockTimings = []; // Zera os tempos para o novo jogo
+                questionsAnsweredInRedTime = 0; // Zera para a nova tentativa do bloco
                 saveProgress();
                 startQuiz(currentTopic, true); 
             };
             buttonsContainer.appendChild(restartButton);
 
-            // Adiciona o botão "Voltar ao Menu"
+            // Adiciona o botão "Voltar ao Menu" (sempre presente)
             const homeButton = document.createElement('button');
             homeButton.textContent = 'Voltar ao Menu';
             homeButton.className = 'bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg flex-1 text-base sm:text-lg';
@@ -1024,6 +1138,28 @@
          * Exibe a tela de vitória final quando um tópico é totalmente concluído.
          */
         function showVictoryScreen() {
+            // Calcula a pontuação e tempo totais para o tópico completo
+            const totalScoreTopic = progress[currentTopic].totalScore;
+            const totalPossibleQuestions = quizData[currentTopic].length; // Total de 30 perguntas
+
+            // Porcentagem de acertos geral
+            const overallCorrectAnswersPercentage = (totalScoreTopic / totalPossibleQuestions) * 100;
+
+            // Condição para vitória: 90% de acertos totais
+            if (overallCorrectAnswersPercentage < 90) {
+                console.log(`Pontuação total (${overallCorrectAnswersPercentage.toFixed(0)}%) abaixo de 90%. Voltando ao menu principal.`);
+                const feedbackHome = document.getElementById('feedback-message-home');
+                if (feedbackHome) {
+                    feedbackHome.textContent = `Sua pontuação total (${overallCorrectAnswersPercentage.toFixed(0)}%) foi abaixo de 90%. Tente novamente para alcançar a vitória!`;
+                    feedbackHome.classList.remove('hidden');
+                    feedbackHome.style.display = 'block';
+                    feedbackHome.classList.add('text-red-400');
+                }
+                showScreen('home-screen');
+                return; // Sai da função para não exibir a tela de vitória
+            }
+
+            // Se chegou aqui, a condição de vitória foi atendida
             // Define a imagem de fundo da tela de vitória com base no tópico atual
             if (victoryTopicBackgroundImages[currentTopic]) {
                 victoryScreen.style.backgroundImage = `url('${victoryTopicBackgroundImages[currentTopic]}')`;
@@ -1031,18 +1167,12 @@
                 victoryScreen.style.backgroundPosition = 'center';
             } else {
                 // Fallback para uma imagem genérica se não houver uma específica para o tópico
-                victoryScreen.style.backgroundImage = `url('${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%20(1).png')`;
+                victoryScreen.style.backgroundImage = `url('${GITHUB_PAGES_BASE_URL}imagens/jesus1.png')`; /* Fallback para jesus1.png */
                 victoryScreen.style.backgroundSize = 'cover';
                 victoryScreen.style.backgroundPosition = 'center';
             }
 
-            // Calcula a pontuação e tempo totais para o tópico completo
-            const totalScoreTopic = progress[currentTopic].totalScore;
             const totalTimeTakenTopicMs = progress[currentTopic].totalTimeTaken;
-            const totalPossibleQuestions = quizData[currentTopic].length; // Total de 30 perguntas
-
-            // Porcentagem de acertos geral
-            const overallCorrectAnswersPercentage = (totalScoreTopic / totalPossibleQuestions) * 100;
 
             // Porcentagem de eficiência de tempo geral
             const totalPossibleTimeMs = totalPossibleQuestions * timerDuration * 1000;
@@ -1119,13 +1249,7 @@
             
             // Adiciona o evento de clique ao botão "Iniciar Quiz" para transitar para a tela inicial
             startAppButton.addEventListener('click', () => {
-                const enteredUsername = usernameInput.value.trim();
-                if (enteredUsername) {
-                    currentUsername = enteredUsername;
-                } else {
-                    currentUsername = 'Jogador'; // Define um nome padrão se o campo estiver vazio
-                }
-                saveProgress(); // Salva o nome de usuário (se alterado)
+                // Não há mais input de nome de usuário, então apenas avança
                 showScreen('home-screen'); 
             });
 
@@ -1138,6 +1262,35 @@
                 }
                 showScreen('home-screen'); 
             });
+
+            // Adiciona o event listener para o botão "Jogar Novamente Este Tópico" na tela de vitória
+            playAgainTopicButton.addEventListener('click', () => {
+                // Pausar música de vitória antes de mudar de tela
+                if (!victoryMusic.paused) {
+                    victoryMusic.pause();
+                    victoryMusic.currentTime = 0;
+                }
+                // Reseta o progresso do tópico atual para jogar novamente
+                progress[currentTopic].completedQuestions = 0;
+                progress[currentTopic].totalScore = 0;
+                progress[currentTopic].totalTimeTaken = 0;
+                progress[currentTopic].isCompleted = false; // Marca como não concluído para poder jogar novamente
+                saveProgress(); // Salva o progresso resetado
+                startQuiz(currentTopic); // Inicia o quiz para o mesmo tópico
+            });
+
+            // Adiciona o event listener para o botão "Próximo Tópico" (se houver)
+            // Por enquanto, ele apenas volta para a tela inicial e pausa a música de vitória.
+            // A lógica de "próximo tópico" real precisaria ser implementada se houver mais tópicos.
+            if (nextTopicButton) {
+                nextTopicButton.addEventListener('click', () => {
+                    if (!victoryMusic.paused) {
+                        victoryMusic.pause();
+                        victoryMusic.currentTime = 0;
+                    }
+                    showScreen('home-screen'); // Volta para a tela inicial
+                });
+            }
 
             // Adiciona o event listener para pular o racional
             quizContainer.addEventListener('click', () => {
