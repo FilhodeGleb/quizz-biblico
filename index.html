@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- As importações do Firebase SDK foram removidas, pois o ranking e o sistema de autenticação foram retirados. -->
+    <!-- Adicionado um favicon genérico para evitar erro 404 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭐</text></svg>" />
 
     <style>
         body {
@@ -30,6 +31,8 @@
             padding: 0.75rem; /* Adiciona um pouco de padding para melhor visualização */
             border-radius: 0.5rem; /* Arredonda as bordas */
             color: white; /* Garante que o texto seja branco para contraste */
+            z-index: 10; /* Adiciona um z-index alto para garantir que ele esteja na frente */
+            position: relative; /* Necessário para z-index funcionar */
         }
         /* Estilo para a tela de carregamento inicial com a imagem de fundo exclusiva */
         .background-initial {
@@ -129,12 +132,12 @@
 <body class="bg-slate-900 text-white">
 
     <!-- Música de Fundo da Tela Inicial -->
-    <audio id="bg-music" loop>
+    <audio id="bg-music" loop onerror="console.error('Erro ao carregar música de fundo:', this.src)">
         Seu navegador não suporta o elemento de áudio.
     </audio>
 
     <!-- Música da Tela de Vitória -->
-    <audio id="victory-music">
+    <audio id="victory-music" onerror="console.error('Erro ao carregar música de vitória:', this.src)">
         Seu navegador não suporta o elemento de áudio.
     </audio>
 
@@ -451,14 +454,14 @@
         const victoryMusicUrl = `${GITHUB_PAGES_BASE_URL}Oceanostelafinal.mp3`; 
 
         // URLs das imagens de fundo para as perguntas (seleção aleatória)
+        // Usando um placeholder para a imagem que está falhando no carregamento (404)
         const quizBackgroundImages = [
-            `${GITHUB_PAGES_BASE_URL}imagens/Design%20sem%20nome%C3%A7.png`,
             `${GITHUB_PAGES_BASE_URL}imagens/Design.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_225457748-stock-illustration-biblical-vector-illustration-series-jesus.png`,
+            'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Quiz+1', // Placeholder para imagem com 404
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_234810260-stock-illustration-biblical-vector-illustration-series-way.png`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_256938046-stock-illustration-jesus-heals-the-blind-man-Picsart-AiImageEnhancer.jpg`,
+            'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Quiz+2', // Placeholder para imagem com 404
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_256938844-stock-illustration-jesus-comes-to-jerusalem-as-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_354432542-stock-illustration-biblical-vector-illustration-series-jesus.png`,
+            'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Quiz+3', // Placeholder para imagem com 404
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_393585142-stock-illustration-biblical-vector-illustration-jesus-talking-Picsart-AiImageEnhancer.jpg`,
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_666141214-stock-illustration-biblical-figure-illustration-series-moses-Picsart-AiImageEnhancer.jpg`,
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_711506406-stock-illustration-biblical-vector-illustration-series-biblical-Picsart-AiImageEnhancer.jpg`,
@@ -474,12 +477,12 @@
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_749091306-stock-illustration-hand-god-protects-blesses-christian-Picsart-AiImageEnhancer.jpg`,
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_749091328-stock-illustration-shining-silhouette-jesus-standing-hill-Picsart-AiImageEnhancer.jpg`,
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_787653916-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701130-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701142-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701154-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701130-stock-illustration-biblical-vector-illustration-series-way.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701142-stock-illustration-biblical-vector-illustration-series-way.png`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701154-stock-illustration-biblical-vector-illustration-series-way.png`,
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701180-stock-illustration-pontius-pilate-washing-his-hands-Picsart-AiImageEnhancer.jpg`,
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701210-stock-illustration-biblical-vector-illustration-way-cross-Picsart-AiImageEnhancer.jpg`,
-            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701224-stock-illustration-biblical-vector-illustration-series-way-Picsart-AiImageEnhancer.jpg`,
+            `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803701224-stock-illustration-biblical-vector-illustration-series-way.png`,
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803702008-stock-illustration-green-economy-concept-scale-businessman-Picsart-AiImageEnhancer.jpg`,
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_803702036-stock-illustration-two-hands-raised-prayer-supplication-Picsart-AiImageEnhancer.jpg`,
             `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_818199042-stock-illustration-simple-minimalist-biblical-vector-illustration-Picsart-AiImageEnhancer.jpg`,
@@ -498,8 +501,8 @@
         // Imagens específicas para a tela de vitória por tópico
         const victoryTopicBackgroundImages = {
             geografia: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_225457748-stock-illustration-biblical-vector-illustration-series-jesus.png`,
-            pessoas: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_354432542-stock-illustration-biblical-vector-illustration-series-jesus.png`,
-            eventos: `${GITHUB_PAGES_BASE_URL}imagens/depositphotos_666141214-stock-illustration-biblical-figure-illustration-series-moses-Picsart-AiImageEnhancer.jpg`
+            pessoas: 'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Pessoas', // Placeholder para imagem com 404
+            eventos: 'https://placehold.co/1280x720/000000/FFFFFF?text=Imagem+Eventos' // Placeholder para imagem com 404
         };
 
         // Sons para feedback (acerto, erro, bloco completo, vitória)
@@ -577,7 +580,7 @@
             const timeTaken = timerDuration * 1000; // Tempo total esgotado (15 segundos)
             blockTimings.push(timeTaken); // Adiciona o tempo à lista do bloco
 
-            feedbackMessage.textContent = "Tempo esgotado! Nenhuma opção foi escolhida.";
+            feedbackMessage.textContent = "Tempo esgotado! Clique para continuar.";
             feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-red-300";
             
             // Desabilita os botões para evitar cliques tardios
@@ -603,10 +606,12 @@
             rationaleText.classList.remove('hidden'); // Garante que o racional seja visível
             displayRationale(questionData.rationale); // Exibe o racional
 
-            // Armazena o ID do timeout para permitir pular
-            rationaleAdvanceTimeoutId = setTimeout(() => {
-                advanceQuizAfterRationale();
-            }, 5000); // Racional visível por 5 segundos antes de avançar
+            // DEBUG LOGS para o racional
+            console.log("Racional deve estar visível agora.");
+            console.log("Status do racional (hidden class):", rationaleText.classList.contains('hidden'));
+            console.log("Conteúdo do racional:", rationaleText.innerHTML);
+
+            // Removido o setTimeout para avanço automático. O avanço agora é apenas por clique no container.
         }
 
         /**
@@ -644,16 +649,6 @@
          * @param {string} screenId - O ID do elemento da tela a ser exibida.
          */
         function showScreen(screenId) {
-            // Pausa todas as músicas ao trocar de tela
-            if (bgMusic && !bgMusic.paused) {
-                bgMusic.pause();
-                bgMusic.currentTime = 0;
-            }
-            if (victoryMusic && !victoryMusic.paused) {
-                victoryMusic.pause();
-                victoryMusic.currentTime = 0;
-            }
-
             // Oculta todas as telas
             initialLoadScreen.classList.add('hidden');
             homeScreen.classList.add('hidden');
@@ -664,18 +659,46 @@
             // Exibe a tela desejada
             document.getElementById(screenId).classList.remove('hidden');
             
-            // Se a tela inicial estiver sendo exibida, atualiza o progresso e toca a próxima música de fundo
+            // Gerencia a reprodução de música
             if (screenId === 'home-screen') {
+                // Pausar música de vitória se estiver tocando
+                if (!victoryMusic.paused) {
+                    victoryMusic.pause();
+                    victoryMusic.currentTime = 0;
+                }
                 updateProgressDisplay();
-                // Alterna a música de fundo e a reproduz
                 bgMusic.src = backgroundMusicUrls[currentBackgroundMusicIndex];
                 currentBackgroundMusicIndex = (currentBackgroundMusicIndex + 1) % backgroundMusicUrls.length; // Avança para a próxima música
                 
-                if (bgMusic && bgMusic.paused) { 
-                    bgMusic.play().catch(e => console.log("Erro ao tentar tocar a música de fundo: ", e));
+                bgMusic.play().catch(e => {
+                    console.error(`Erro ao tentar tocar a música de fundo (${bgMusic.src}):`, e);
+                    if (e.name === "NotAllowedError") {
+                        console.warn("Reprodução automática de áudio bloqueada pelo navegador. Interaja mais com a página para permitir.");
+                    }
+                });
+            } else if (screenId === 'victory-screen') {
+                // Pausar música de fundo se estiver tocando
+                if (!bgMusic.paused) {
+                    bgMusic.pause();
+                    bgMusic.currentTime = 0;
                 }
-            } 
-            // A música da vitória é tocada na função showVictoryScreen
+                // A URL da victoryMusic já é definida em showVictoryScreen antes de showScreen ser chamada
+                victoryMusic.play().catch(e => {
+                    console.error(`Erro ao tocar música de vitória (${victoryMusic.src}):`, e);
+                    if (e.name === "NotAllowedError") {
+                        console.warn("Reprodução automática de áudio bloqueada pelo navegador. Interaja mais com a página para permitir.");
+                    }
+                });
+            } else { // Para quiz-screen ou results-screen, pause ambas as músicas
+                if (!bgMusic.paused) {
+                    bgMusic.pause();
+                    bgMusic.currentTime = 0;
+                }
+                if (!victoryMusic.paused) {
+                    victoryMusic.pause();
+                    victoryMusic.currentTime = 0;
+                }
+            }
         }
 
         /**
@@ -840,7 +863,7 @@
                 currentBlockScore++; // Incrementa a pontuação do bloco atual
                 correctSound.play().catch(e => console.log("Erro ao tocar som de acerto: ", e));
                 answerButtons[selectedIndex].className = 'w-full text-left p-3 sm:p-4 rounded-lg bg-green-500 transition-all text-base sm:text-lg';
-                feedbackMessage.textContent = "Resposta Correta!";
+                feedbackMessage.textContent = "Resposta Correta! Clique para continuar.";
                 feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-green-300";
             } else {
                 incorrectSound.play().catch(e => console.log("Erro ao tocar som de erro: ", e));
@@ -854,7 +877,7 @@
                 }
                 // Mensagem de feedback já configurada em handleTimeout para esse caso
                 if (selectedIndex !== -1) { // Só mostra 'Incorreta' se o usuário clicou
-                    feedbackMessage.textContent = "Resposta Incorreta!";
+                    feedbackMessage.textContent = "Resposta Incorreta! Clique para continuar.";
                     feedbackMessage.className = "mt-4 sm:mt-6 text-center text-base sm:text-lg font-bold text-red-300";
                 }
             }
@@ -867,10 +890,12 @@
             rationaleText.classList.remove('hidden'); // Garante que o racional seja visível
             displayRationale(questionData.rationale); // Exibe o racional para todas as situações
             
-            // Armazena o ID do timeout para permitir pular
-            rationaleAdvanceTimeoutId = setTimeout(() => {
-                advanceQuizAfterRationale();
-            }, 5000); // Racional visível por 5 segundos antes de avançar
+            // DEBUG LOGS para o racional
+            console.log("Racional deve estar visível agora.");
+            console.log("Status do racional (hidden class):", rationaleText.classList.contains('hidden'));
+            console.log("Conteúdo do racional:", rationaleText.innerHTML);
+
+            // Removido o setTimeout para avanço automático. O avanço agora é apenas por clique no container.
         }
 
         /**
@@ -1076,25 +1101,7 @@
             victoryCylinderPercentageText.textContent = `${overallTimeEfficiencyPercentage}%`;
 
             victoryMusic.src = victoryMusicUrl; // Define a URL da música
-            victoryMusic.play().catch(e => console.log("Erro ao tocar música de vitória: ", e)); // Toca a música
-
-            // Verifica se há tópicos não concluídos para habilitar o botão "Próximo Tópico"
-            const allTopics = Object.keys(quizData);
-            const completedTopics = allTopics.filter(topic => progress[topic].isCompleted);
-            const uncompletedTopics = allTopics.filter(topic => !progress[topic].isCompleted);
-
-            if (uncompletedTopics.length > 0) {
-                nextTopicButton.classList.remove('hidden');
-                nextTopicButton.onclick = () => {
-                    const nextTopic = uncompletedTopics[0]; // Pega o primeiro tópico não concluído
-                    currentQuestionIndex = 0; // Reinicia o índice da pergunta para o novo tópico
-                    startQuiz(nextTopic); 
-                };
-            } else {
-                nextTopicButton.classList.add('hidden'); // Esconde se todos os tópicos estiverem completos
-            }
-            
-            showScreen('victory-screen'); 
+            showScreen('victory-screen'); // Move showScreen here to ensure victory screen is visible before playing music
         }
         
         // --- INICIALIZAÇÃO DO APLICATIVO ---
@@ -1123,7 +1130,7 @@
             // Adiciona o event listener para o botão "Voltar ao Menu Principal" na tela de vitória
             backToMenuVictoryButton.addEventListener('click', () => {
                 // Ao voltar para o menu, a música de vitória é pausada
-                if (victoryMusic && !victoryMusic.paused) {
+                if (!victoryMusic.paused) {
                     victoryMusic.pause();
                     victoryMusic.currentTime = 0;
                 }
@@ -1133,7 +1140,8 @@
             // Adiciona o event listener para pular o racional
             quizContainer.addEventListener('click', () => {
                 // Verifica se o racional está visível e se há um timeout ativo para ele
-                if (!rationaleText.classList.contains('hidden') && rationaleAdvanceTimeoutId) {
+                if (!rationaleText.classList.contains('hidden') && feedbackMessage.textContent.includes('Clique para continuar.')) {
+                    // Somente avança se a mensagem de feedback indicar para clicar
                     advanceQuizAfterRationale();
                 }
             });
